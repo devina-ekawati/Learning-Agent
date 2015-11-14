@@ -16,6 +16,9 @@ public class LearningAgent {
    */
   public static void main(String[] args) {
     // TODO code application logic here
+    DataCollection data = new DataCollection();
+    data.readFile("data.txt");
+    data.displayData();
   }
   
 }
