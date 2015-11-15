@@ -227,13 +227,6 @@ public class NaiveBayesLearning {
                 }
                 System.out.println();
             }
-            System.out.println("*** Maint ***");
-            for(int i=0; i<4; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(maint[i][j] + " ");
-                }
-                System.out.println();
-            }
         }
     }
     
@@ -345,6 +338,37 @@ public class NaiveBayesLearning {
         }
         //System.out.println("7: "+result);
         return result;
+    }
+    
+    public String classify(String atr1, String atr2, String atr3, String atr4, String atr5, String atr6) {
+        String _class[] = {"unacc", "acc", "good", "vgood"};
+        float _probability[] = new float[4];
+        for (int i = 0; i < 4; i++) {
+            _probability[i] = probability(atr1,atr2,atr3,atr4,atr5,atr6, _class[i]);
+        }
+        int imax = 0;
+        for (int i = 1; i < 4; i++) {
+            if (_probability[imax] < _probability[i]) {
+                imax = i;
+            }
+        }
+        return _class[imax];
+    }
+    
+    public float[] getAccuracyFullTraining() {
+        int countTrue = 0, countFalse = 0;
+        for (int i = 0; i < dataCollection.getData().size(); i++) {
+            String result = classify(dataCollection.getDatumAt(i).getBuying(), dataCollection.getDatumAt(i).getMaint(), dataCollection.getDatumAt(i).getDoors(), dataCollection.getDatumAt(i).getPersons(), dataCollection.getDatumAt(i).getLugBoot(), dataCollection.getDatumAt(i).getSafety());
+            if (result.equals(dataCollection.getDatumAt(i).getClass())) {
+                countTrue++;
+            } else {
+                countFalse++;
+            }
+        }
+        float[] accuracy = new float[2];
+        accuracy[0] = countTrue / (float) dataCollection.getData().size();
+        accuracy[1] = countFalse / (float) dataCollection.getData().size();
+        return accuracy;
     }
     
     public static void main(String[] args) {
