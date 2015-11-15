@@ -55,6 +55,11 @@ public class DataCollection {
     }
   }
   
+  public void copy(DataCollection src) {
+      data = new ArrayList<Datum>(src.getData());
+  }
+  
+  
   public void displayData() {
     for (int i = 0; i < data.size(); i++) {
       System.out.print(data.get(i).getBuying() + " ");
