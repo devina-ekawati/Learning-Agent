@@ -56,7 +56,11 @@ public class DataCollection {
   }
   
   public void copy(DataCollection src) {
-      data = new ArrayList<Datum>(src.getData());
+      data = new ArrayList<Datum>();
+      for(Datum datum : src.getData()) {
+          Datum temp = new Datum(datum.getBuying(), datum.getMaint(), datum.getDoors(), datum.getPersons(), datum.getLugBoot(), datum.getSafety(), datum.getKelas());
+          data.add(temp);
+      }
   }
   
   
