@@ -18,7 +18,10 @@ public class LearningAgent {
     // TODO code application logic here
     DataCollection data = new DataCollection();
     data.readFile("data.txt");
-    data.displayData();
+    
+    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, "vhigh", "vhigh", "2", "2", "small", "low");
+    neighbour.doAlgorithm();
+    System.out.println(neighbour.getKelas());
   }
   
 }
