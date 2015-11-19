@@ -21,8 +21,7 @@ public class KNearestNeighbour {
   
   // Konstruktor
   public KNearestNeighbour(int _k, DataCollection _dataCollection, ArrayList<String> _attributes) {
-    dataCollection = new DataCollection();
-    dataCollection.copy(_dataCollection);
+    dataCollection = _dataCollection;
     k = _k;
     attributes = _attributes;
     distance = new ArrayList<Integer>();
@@ -41,7 +40,6 @@ public class KNearestNeighbour {
   public void doAlgorithm() {
     findDistance();
     findKelas();
-    //display();
   }
   
   public void findDistance() {
@@ -51,7 +49,7 @@ public class KNearestNeighbour {
       countDistance = 0;
       
       // Membandingkan jarak setiap attribute dengan attribute pada dataCollection ke-i
-      for (int j = 0; j < attributes.size(); j++) {
+      for (int j = 0; j < (attributes.size()-1); j++) {
           if (!attributes.get(j).equals(dataCollection.getDatumAt(i).getAttributes().get(j))) {
               countDistance++;
           }
@@ -81,12 +79,14 @@ public class KNearestNeighbour {
     topDistance = distanceAt[0];
     while (!stopLoop && (x < attributes.size())) {
         if ((k > bottomDistance) && (k <= topDistance)) {
-            maxDistance = bottomDistance;
+            maxDistance = x;
             countMaxDistance = k - bottomDistance;
             stopLoop = true;
         } else {
             bottomDistance = topDistance;
-            topDistance = topDistance + distanceAt[x+1];
+            if ((x+1) < attributes.size()) {
+                topDistance = topDistance + distanceAt[x+1];
+            }
         }
         x++;
     }
@@ -135,12 +135,4 @@ public class KNearestNeighbour {
         }
     }
 }
-  
-  public void display() {
-    for (int i = 0; i < 7; i++) {
-      System.out.println(distanceAt[i]);
-    }
-    System.out.println();
-    
-  }
 }

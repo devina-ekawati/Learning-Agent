@@ -22,16 +22,17 @@ public class LearningAgent {
     data.readFile("weather.nominal.arff");
     //data.readFile("car.arff");
     
-    ArrayList<String> test = new ArrayList<String>();
-    test.add("sunny");
-    test.add("hot");
-    test.add("high");
-    test.add("TRUE");
-    test.add("-none-");
-    
-    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, test);
-    neighbour.doAlgorithm();
-    System.out.println(neighbour.getKelas());
+    // Testing KNN
+//    ArrayList<String> test = new ArrayList<String>();
+//    test.add("sunny");
+//    test.add("hot");
+//    test.add("high");
+//    test.add("TRUE");
+//    test.add("-none-");
+//    
+//    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, test);
+//    neighbour.doAlgorithm();
+//    System.out.println(neighbour.getKelas());
   }
   
 }
