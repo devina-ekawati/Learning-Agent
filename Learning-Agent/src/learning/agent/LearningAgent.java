@@ -16,10 +16,18 @@ public class LearningAgent {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    // TODO code application logic here
     DataCollection data = new DataCollection();
     data.readFile("weather.nominal.arff");
-    //data.readFile("car.arff");
+    // Full Training Agent
+    KNNLearningAgent fullTrainingAgent = new KNNLearningAgent(5, data);
+    fullTrainingAgent.fullTrainingKNN();
+    System.out.println("Prediksi benar: " + fullTrainingAgent.getNPredictionTrue(0));
+    System.out.println("Akurasi: " + fullTrainingAgent.countFullTrainingAccuracy());
+    
+    // Ten-Fold Cross Validation Agent
+    KNNLearningAgent tenFoldAgent = new KNNLearningAgent(5, data);
+    tenFoldAgent.tenFoldKNN();
+    System.out.println("Akurasi total: " + tenFoldAgent.countFullTrainingAccuracy());
     
     // Testing KNN
 //    ArrayList<String> test = new ArrayList<String>();
