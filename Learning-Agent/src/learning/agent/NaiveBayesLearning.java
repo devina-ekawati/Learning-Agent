@@ -185,48 +185,48 @@ public class NaiveBayesLearning {
                     safety[2][col]++;
                     break;
             }
-            System.out.println("*** Buying ***");
-            for(int i=0; i<4; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(buying[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("*** Maint ***");
-            for(int i=0; i<4; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(maint[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("*** Doors ***");
-            for(int i=0; i<4; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(doors[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("*** Persons ***");
-            for(int i=0; i<3; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(persons[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("*** Lug_boot ***");
-            for(int i=0; i<3; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(lug_boot[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("*** Safety ***");
-            for(int i=0; i<3; i++) {
-                for(int j=0; j<4; j++) {
-                    System.out.print(safety[i][j] + " ");
-                }
-                System.out.println();
-            }
+//            System.out.println("*** Buying ***");
+//            for(int i=0; i<4; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(buying[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("*** Maint ***");
+//            for(int i=0; i<4; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(maint[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("*** Doors ***");
+//            for(int i=0; i<4; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(doors[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("*** Persons ***");
+//            for(int i=0; i<3; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(persons[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("*** Lug_boot ***");
+//            for(int i=0; i<3; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(lug_boot[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println("*** Safety ***");
+//            for(int i=0; i<3; i++) {
+//                for(int j=0; j<4; j++) {
+//                    System.out.print(safety[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
         }
     }
     
@@ -330,7 +330,7 @@ public class NaiveBayesLearning {
             case "big" :  result = result*lug_boot[2][col]; break;
         }
         //System.out.println("6: "+result);
-        System.out.println("safety : " + safety[0][col]);
+        //System.out.println("safety : " + safety[0][col]);
         switch(atr6) {
             case "low" :  result = result*safety[0][col]; break;
             case "med" :  result = result*safety[1][col]; break;
@@ -359,12 +359,15 @@ public class NaiveBayesLearning {
         int countTrue = 0, countFalse = 0;
         for (int i = 0; i < dataCollection.getData().size(); i++) {
             String result = classify(dataCollection.getDatumAt(i).getBuying(), dataCollection.getDatumAt(i).getMaint(), dataCollection.getDatumAt(i).getDoors(), dataCollection.getDatumAt(i).getPersons(), dataCollection.getDatumAt(i).getLugBoot(), dataCollection.getDatumAt(i).getSafety());
-            if (result.equals(dataCollection.getDatumAt(i).getClass())) {
+            System.out.println("Hasil : " + result + ", Seharusnya : " + dataCollection.getDatumAt(i).getKelas());
+            if (result.compareTo(dataCollection.getDatumAt(i).getKelas()) == 0) {
                 countTrue++;
             } else {
                 countFalse++;
             }
         }
+        System.out.println("Count True : " + countTrue);
+        System.out.println("Count False : " + countFalse);
         float[] accuracy = new float[2];
         accuracy[0] = countTrue / (float) dataCollection.getData().size();
         accuracy[1] = countFalse / (float) dataCollection.getData().size();
@@ -376,9 +379,10 @@ public class NaiveBayesLearning {
         dataCol.readFile("data.txt");
         NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
         agent.process();
-        float[][] result;
-        System.out.println("Safety model"); 
-        result = agent.getSafetyModel();
+        float[] accuracy;
+        accuracy = agent.getAccuracyFullTraining();
+        System.out.println(accuracy[0]);
+        System.out.println(accuracy[1]);
         /*
         for(int i=0; i<4; i++) {
             for(int j=0; j<4; j++) {
