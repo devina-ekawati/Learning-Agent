@@ -15,12 +15,12 @@ public class KNearestNeighbour {
   // Atribut
   private DataCollection dataCollection;
   private int k;
-  private ArrayList<String> attributes;
+  private Datum attributes;
   private ArrayList<Integer> distance;  // Jarak neighbour
   private Integer[] distanceAt;
   
   // Konstruktor
-  public KNearestNeighbour(int _k, DataCollection _dataCollection, ArrayList<String> _attributes) {
+  public KNearestNeighbour(int _k, DataCollection _dataCollection, Datum _attributes) {
     dataCollection = _dataCollection;
     k = _k;
     attributes = _attributes;
@@ -31,15 +31,11 @@ public class KNearestNeighbour {
     }
   }
   
-  // Getter
-  public String getKelas() {
-    return attributes.get(attributes.size()-1);
-  }
-  
   // Method
-  public void doAlgorithm() {
+  public String doAlgorithm() {
     findDistance();
-    findKelas();
+    String result = findKelas();
+    return result;
   }
   
   public void findDistance() {
@@ -64,7 +60,7 @@ public class KNearestNeighbour {
     }
   }
   
-  public void findKelas() {
+  public String findKelas() {
     boolean stopLoop;
     int maxDistance = 0, countMaxDistance = 0, countKelas[], bottomDistance, topDistance, x;
     
@@ -104,7 +100,6 @@ public class KNearestNeighbour {
                     (countKelas[j])++;
                 }
             }
-
             countMaxDistance--;
         }
     }
@@ -125,14 +120,12 @@ public class KNearestNeighbour {
       }
     }
     
+    String result;
     if (countMax > 1) {
-        attributes.set(attributes.size()-1, "-none-");
+      result = "-none-";
     } else { // countMax <= 1
-        for (int i = 0; i < countKelas.length; i++) {
-            if (maxIndex == i) {
-                attributes.set(attributes.size()-1, dataCollection.getAttributeType().get(attributes.size()-1).get(i));
-            }
-        }
+      result = dataCollection.getAttributeType().get(attributes.size()-1).get(maxIndex);
     }
-}
+    return result;
+  }
 }

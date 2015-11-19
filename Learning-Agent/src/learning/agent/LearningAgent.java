@@ -12,7 +12,6 @@ import java.util.ArrayList;
  * @author Devina
  */
 public class LearningAgent {
-
   /**
    * @param args the command line arguments
    */

@@ -25,4 +25,19 @@ public class Datum {
   public ArrayList<String> getAttributes() {
       return attributes;
   }
+  public String getClass() {
+    return get(size()-1);
+  }
+  public String get(int i) {
+    return attributes.get(i);
+  }
+  // Setter
+  public void set(int i, String attribute) {
+    attributes.set(i, attribute);
+  }
+  
+  // Method
+  public int size() {
+    return attributes.size();
+  }
 }
