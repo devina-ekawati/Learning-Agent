@@ -68,7 +68,7 @@ public class KNearestNeighbour {
   
   public void findKelas() {
     boolean stopLoop;
-    int maxDistance, countMaxDistance, countKelas[], bottomDistance, topDistance, x;
+    int maxDistance = 0, countMaxDistance = 0, countKelas[], bottomDistance, topDistance, x;
     
     countKelas = new int[dataCollection.getAttributeType().get(attributes.size()-1).size()];
     for (int i = 0; i < countKelas.length; i++) {
@@ -88,30 +88,7 @@ public class KNearestNeighbour {
             bottomDistance = topDistance;
             topDistance = topDistance + distanceAt[x+1];
         }
-        
         x++;
-    }
-    if (k <= distanceAt[0]) {
-      maxDistance = 0;
-      countMaxDistance = k;
-    } else if ((k > distanceAt[0]) && k <= (distanceAt[0] + distanceAt[1])) {
-      maxDistance = 1;
-      countMaxDistance = k - distanceAt[0];
-    } else if ((k > (distanceAt[0] + distanceAt[1])) && k <= (distanceAt[0] + distanceAt[1] + distanceAt[2])) {
-      maxDistance = 2;
-      countMaxDistance = k - (distanceAt[0] + distanceAt[1]);
-    } else if ((k > (distanceAt[0] + distanceAt[1] + distanceAt[2])) && k <= (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3])) {
-      maxDistance = 3;
-      countMaxDistance = k - (distanceAt[0] + distanceAt[1] + distanceAt[2]);
-    } else if ((k > (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3])) && k <= (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4])) {
-      maxDistance = 4;
-      countMaxDistance = k - (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3]);
-    } else if ((k > (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4])) && k <= (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4] + distanceAt[5])) {
-      maxDistance = 5;
-      countMaxDistance = k - (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4]);
-    } else {  // (k > (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4] + distanceAt[5])) && k <= (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4] + distanceAt[5] + distanceAt[6])
-      maxDistance = 6;
-      countMaxDistance = k - (distanceAt[0] + distanceAt[1] + distanceAt[2] + distanceAt[3] + distanceAt[4] + distanceAt[5]);
     }
     
     for (int i = 0; i < dataCollection.getData().size(); i++) {
@@ -149,7 +126,7 @@ public class KNearestNeighbour {
     }
     
     if (countMax > 1) {
-        attributes.set(attributes.size()-1, "none");
+        attributes.set(attributes.size()-1, "-none-");
     } else { // countMax <= 1
         for (int i = 0; i < countKelas.length; i++) {
             if (maxIndex == i) {

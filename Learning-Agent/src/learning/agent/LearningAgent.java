@@ -5,6 +5,8 @@
  */
 package learning.agent;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Devina
@@ -20,9 +22,16 @@ public class LearningAgent {
     data.readFile("weather.nominal.arff");
     //data.readFile("car.arff");
     
-//    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, "vhigh", "vhigh", "2", "2", "small", "low");
-//    neighbour.doAlgorithm();
-//    System.out.println(neighbour.getKelas());
+    ArrayList<String> test = new ArrayList<String>();
+    test.add("sunny");
+    test.add("hot");
+    test.add("high");
+    test.add("TRUE");
+    test.add("-none-");
+    
+    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, test);
+    neighbour.doAlgorithm();
+    System.out.println(neighbour.getKelas());
   }
   
 }
