@@ -15,37 +15,26 @@ public class KNearestNeighbour {
   // Atribut
   private DataCollection dataCollection;
   private int k;
-  private String buying;
-  private String maint;
-  private String doors;
-  private String persons;
-  private String lugBoot;
-  private String safety;
-  private String kelas;
+  private ArrayList<String> attributes;
   private ArrayList<Integer> distance;  // Jarak neighbour
   private Integer[] distanceAt;
   
   // Konstruktor
-  public KNearestNeighbour(int _k, DataCollection _dataCollection, String _buying, String _maint, String _doors, String _persons, String _lugBoot, String _safety) {
+  public KNearestNeighbour(int _k, DataCollection _dataCollection, ArrayList<String> _attributes) {
     dataCollection = new DataCollection();
     dataCollection.copy(_dataCollection);
     k = _k;
-    buying = _buying;
-    maint = _maint;
-    doors = _doors;
-    persons = _persons;
-    lugBoot = _lugBoot;
-    safety = _safety;
+    attributes = _attributes;
     distance = new ArrayList<Integer>();
-    distanceAt = new Integer[7];
-    for (int i = 0; i < 7; i++) {
+    distanceAt = new Integer[attributes.size()];
+    for (int i = 0; i < distanceAt.length; i++) {
       distanceAt[i] = 0;
     }
   }
   
   // Getter
   public String getKelas() {
-    return kelas;
+    return attributes.get(attributes.size()-1);
   }
   
   // Method
@@ -61,64 +50,47 @@ public class KNearestNeighbour {
     for (int i = 0; i < dataCollection.getData().size(); i++) {
       countDistance = 0;
       
-      // Membandingkan atribut buying
-      if (!buying.equals(dataCollection.getDatumAt(i).getBuying())) {
-        countDistance++;
+      // Membandingkan jarak setiap attribute dengan attribute pada dataCollection ke-i
+      for (int j = 0; j < attributes.size(); j++) {
+          if (!attributes.get(j).equals(dataCollection.getDatumAt(i).getAttributes().get(j))) {
+              countDistance++;
+          }
       }
-      
-      // Membandingkan atribut maint
-      if (!maint.equals(dataCollection.getDatumAt(i).getMaint())) {
-        countDistance++;
-      }
-      
-      // Membandingkan atribut doors
-      if (!doors.equals(dataCollection.getDatumAt(i).getDoors())) {
-        countDistance++;
-      }
-      
-      // Membandingkan atribut persons
-      if (!persons.equals(dataCollection.getDatumAt(i).getPersons())) {
-        countDistance++;
-      }
-      
-      // Membandingkan atribut lugBoot
-      if (!lugBoot.equals(dataCollection.getDatumAt(i).getLugBoot())) {
-        countDistance++;
-      }
-      
-      // Membandingkan atribut safety
-      if (!safety.equals(dataCollection.getDatumAt(i).getSafety())) {
-        countDistance++;
-      }
-      
       distance.add(countDistance);
       
-      if (countDistance.equals(0)) {
-        (distanceAt[0])++;
-      } else if (countDistance.equals(1)) {
-        (distanceAt[1])++;
-      } else if (countDistance.equals(2)) {
-        (distanceAt[2])++;
-      } else if (countDistance.equals(3)) {
-        (distanceAt[3])++;
-      } else if (countDistance.equals(4)) {
-        (distanceAt[4])++;
-      } else if (countDistance.equals(5)) {
-        (distanceAt[5])++;
-      } else {  // countDistance.equals(6)
-        (distanceAt[6])++;
+      for (int j = 0; j < attributes.size(); j++) {
+          if (countDistance.equals(j)) {
+              (distanceAt[j])++;
+          }
       }
     }
   }
   
   public void findKelas() {
-    int maxDistance, countMaxDistance, countKelas[];
+    boolean stopLoop;
+    int maxDistance, countMaxDistance, countKelas[], bottomDistance, topDistance, x;
     
-    countKelas = new int[4];
-    for (int i = 0; i < 4; i++) {
+    countKelas = new int[dataCollection.getAttributeType().get(attributes.size()-1).size()];
+    for (int i = 0; i < countKelas.length; i++) {
       countKelas[i] = 0;
     }
     
+    x = 0;
+    stopLoop = false;
+    bottomDistance = 0;
+    topDistance = distanceAt[0];
+    while (!stopLoop && (x < attributes.size())) {
+        if ((k > bottomDistance) && (k <= topDistance)) {
+            maxDistance = bottomDistance;
+            countMaxDistance = k - bottomDistance;
+            stopLoop = true;
+        } else {
+            bottomDistance = topDistance;
+            topDistance = topDistance + distanceAt[x+1];
+        }
+        
+        x++;
+    }
     if (k <= distanceAt[0]) {
       maxDistance = 0;
       countMaxDistance = k;
@@ -143,61 +115,49 @@ public class KNearestNeighbour {
     }
     
     for (int i = 0; i < dataCollection.getData().size(); i++) {
-      if (distance.get(i) < maxDistance) {
-        if (dataCollection.getDatumAt(i).getKelas().equals("unacc")) {
-          (countKelas[0])++;
-        } else if (dataCollection.getDatumAt(i).getKelas().equals("acc")) {
-          (countKelas[1])++;
-        } else if (dataCollection.getDatumAt(i).getKelas().equals("good")) {
-          (countKelas[2])++;
-        } else {  // dataCollection.getDatumAt(i).getKelas().equals("vgood")
-          (countKelas[3])++;
+        if (distance.get(i) < maxDistance) {
+            for (int j = 0; j < countKelas.length; j++) {
+                if (dataCollection.getDatumAt(i).getAttributes().get(attributes.size()-1).equals(dataCollection.getAttributeType().get(attributes.size()-1).get(j))) {
+                    (countKelas[j])++;
+                }
+            }
+        } else if (distance.get(i).equals(maxDistance) && (countMaxDistance > 0)) {
+            for (int j = 0; j < countKelas.length; j++) {
+                if (dataCollection.getDatumAt(i).getAttributes().get(attributes.size()-1).equals(dataCollection.getAttributeType().get(attributes.size()-1).get(j))) {
+                    (countKelas[j])++;
+                }
+            }
+
+            countMaxDistance--;
         }
-      } else if (distance.get(i).equals(maxDistance) && (countMaxDistance > 0)) {
-        if (dataCollection.getDatumAt(i).getKelas().equals("unacc")) {
-          (countKelas[0])++;
-        } else if (dataCollection.getDatumAt(i).getKelas().equals("acc")) {
-          (countKelas[1])++;
-        } else if (dataCollection.getDatumAt(i).getKelas().equals("good")) {
-          (countKelas[2])++;
-        } else {  // dataCollection.getDatumAt(i).getKelas().equals("vgood")
-          (countKelas[3])++;
-        }
-        
-        countMaxDistance--;
-      }
     }
     
     // Mencari kelas dengan count terbanyak
     int maxCount = countKelas[0], countMax = 0, maxIndex = 0;
     
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < countKelas.length; i++) {
       if (countKelas[i] > maxCount) {
         maxCount = countKelas[i];
         maxIndex = i;
       }
     }
     
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < countKelas.length; i++) {
       if (countKelas[i] == maxCount) {
         countMax++;
       }
     }
     
     if (countMax > 1) {
-      kelas = "none";
+        attributes.set(attributes.size()-1, "none");
     } else { // countMax <= 1
-      if (maxIndex == 0) {
-        kelas = "unacc";
-      } else if (maxIndex == 1) {
-        kelas = "acc";
-      } else if (maxIndex == 2) {
-        kelas = "good";
-      } else {  // maxIndex == 3
-        kelas = "vgood";
-      }
+        for (int i = 0; i < countKelas.length; i++) {
+            if (maxIndex == i) {
+                attributes.set(attributes.size()-1, dataCollection.getAttributeType().get(attributes.size()-1).get(i));
+            }
+        }
     }
-  }
+}
   
   public void display() {
     for (int i = 0; i < 7; i++) {

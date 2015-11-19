@@ -17,11 +17,12 @@ public class LearningAgent {
   public static void main(String[] args) {
     // TODO code application logic here
     DataCollection data = new DataCollection();
-    data.readFile("data.txt");
+    data.readFile("weather.nominal.arff");
+    //data.readFile("car.arff");
     
-    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, "vhigh", "vhigh", "2", "2", "small", "low");
-    neighbour.doAlgorithm();
-    System.out.println(neighbour.getKelas());
+//    KNearestNeighbour neighbour = new KNearestNeighbour(5, data, "vhigh", "vhigh", "2", "2", "small", "low");
+//    neighbour.doAlgorithm();
+//    System.out.println(neighbour.getKelas());
   }
   
 }

@@ -18,10 +18,14 @@ import java.util.logging.Logger;
 public class DataCollection {
   // Atribut
   ArrayList<Datum> data;
+  ArrayList<String> attributeName;
+  ArrayList<ArrayList<String>> attributeType;
   
   // Konstruktor
   public DataCollection() {
     data = new ArrayList<Datum>();
+    attributeName = new ArrayList<String>();
+    attributeType = new ArrayList<ArrayList<String>>();
   }
   
   // Getter
@@ -33,8 +37,18 @@ public class DataCollection {
     return data.get(i);
   }
   
+  public ArrayList<String> getAttributeName() {
+      return attributeName;
+  }
+  
+  public ArrayList<ArrayList<String>> getAttributeType() {
+      return attributeType;
+  }
+  
   // Method
   public void readFile(String fileName) {
+    ArrayList<String> attributes;
+    ArrayList<String> value;
     String line = null;
     
     try {
@@ -42,10 +56,37 @@ public class DataCollection {
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       
       try {
+        line = bufferedReader.readLine();   // ignore @relation
+        line = bufferedReader.readLine();   // ignore blank line
+        
+        // Membaca @attribute dari file
+        while (!(line = bufferedReader.readLine()).trim().equals("")) {
+            String[] splitResult = line.split("[\\s{},]+");
+            // Menyimpan nama attribute
+            attributeName.add(splitResult[1]);
+            
+            // Menyimpan value attribute
+            value = new ArrayList<String>();
+            for (int i = 2; i < splitResult.length; i++) {
+                value.add(splitResult[i]);
+            }
+            attributeType.add(value);
+//          Datum datum = new Datum();
+//          data.add(datum);
+        }
+        line = bufferedReader.readLine();   // ignore @data
+        
+        // Membaca @data dari file
         while ((line = bufferedReader.readLine()) != null) {
-          String[] dataValues = line.split(",");
-          Datum datum = new Datum(dataValues[0], dataValues[1], dataValues[2], dataValues[3], dataValues[4], dataValues[5], dataValues[6]);
-          data.add(datum);
+            String[] splitResult = line.split("[\\s{},]+");
+            attributes = new ArrayList<String>();
+            
+            // Menyimpan data attribute
+            for (int i = 0; i < attributeName.size(); i++) {
+                attributes.add(splitResult[i]);
+            }
+            Datum datum = new Datum(attributes);
+            data.add(datum);
         }
       } catch (IOException ex) {
         Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,18 +102,5 @@ public class DataCollection {
           Datum temp = new Datum(datum.getBuying(), datum.getMaint(), datum.getDoors(), datum.getPersons(), datum.getLugBoot(), datum.getSafety(), datum.getKelas());
           data.add(temp);
       }
-  }
-  
-  
-  public void displayData() {
-    for (int i = 0; i < data.size(); i++) {
-      System.out.print(data.get(i).getBuying() + " ");
-      System.out.print(data.get(i).getMaint() + " ");
-      System.out.print(data.get(i).getDoors() + " ");
-      System.out.print(data.get(i).getPersons() + " ");
-      System.out.print(data.get(i).getLugBoot() + " ");
-      System.out.print(data.get(i).getSafety() + " ");
-      System.out.println(data.get(i).getKelas() + " ");
-    }
   }
 }
