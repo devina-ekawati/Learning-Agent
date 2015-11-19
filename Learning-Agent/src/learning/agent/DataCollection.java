@@ -45,6 +45,14 @@ public class DataCollection {
       return attributeType;
   }
   
+  public int getTotalAttribute() {
+    return attributeName.size();
+  }
+  
+  public int getTotalAttributeType(int i) {
+    return attributeType.get(i).size();
+  }
+  
   // Method
   public void readFile(String fileName) {
     ArrayList<String> attributes;
@@ -96,13 +104,4 @@ public class DataCollection {
     }
   }
   
-  public void copy(DataCollection src) {
-      data = new ArrayList<Datum>();
-      for(Datum datum : src.getData()) {
-          ArrayList<String> temp1 = new ArrayList<String>();
-          
-          Datum temp2 = new Datum(datum.getAttributes());
-          data.add(temp2);
-      }
-  }
 }
