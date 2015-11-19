@@ -25,7 +25,7 @@ public class Datum {
   public ArrayList<String> getAttributes() {
       return attributes;
   }
-  public String getClass() {
+  public String getClassAttribute() {
     return get(size()-1);
   }
   public String get(int i) {

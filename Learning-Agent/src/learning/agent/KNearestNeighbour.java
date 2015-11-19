@@ -38,7 +38,13 @@ public class KNearestNeighbour {
     return result;
   }
   
-  public void findDistance() {
+  public String doAlgorithm(int firstIndex, int lastIndex) {
+      findDistance(firstIndex, lastIndex);
+      String result = findKelas(firstIndex, lastIndex);
+      return result;
+  }
+  
+  private void findDistance() {
     Integer countDistance;
     
     for (int i = 0; i < dataCollection.getData().size(); i++) {
@@ -60,7 +66,32 @@ public class KNearestNeighbour {
     }
   }
   
-  public String findKelas() {
+  private void findDistance(int firstIndex, int lastIndex) {
+    Integer countDistance;
+    
+    for (int i = 0; i < dataCollection.getData().size(); i++) {
+      if (i == firstIndex) {
+          i = lastIndex + 1;
+      }
+      countDistance = 0;
+
+      // Membandingkan jarak setiap attribute dengan attribute pada dataCollection ke-i
+      for (int j = 0; j < (attributes.size()-1); j++) {
+          if (!attributes.get(j).equals(dataCollection.getDatumAt(i).getAttributes().get(j))) {
+              countDistance++;
+          }
+      }
+      distance.add(countDistance);
+
+      for (int j = 0; j < attributes.size(); j++) {
+          if (countDistance.equals(j)) {
+              (distanceAt[j])++;
+          }
+      }
+    }
+  }
+  
+  private String findKelas() {
     boolean stopLoop;
     int maxDistance = 0, countMaxDistance = 0, countKelas[], bottomDistance, topDistance, x;
     
@@ -95,6 +126,84 @@ public class KNearestNeighbour {
                 }
             }
         } else if (distance.get(i).equals(maxDistance) && (countMaxDistance > 0)) {
+            for (int j = 0; j < countKelas.length; j++) {
+                if (dataCollection.getDatumAt(i).getAttributes().get(attributes.size()-1).equals(dataCollection.getAttributeType().get(attributes.size()-1).get(j))) {
+                    (countKelas[j])++;
+                }
+            }
+            countMaxDistance--;
+        }
+    }
+    
+    // Mencari kelas dengan count terbanyak
+    int maxCount = countKelas[0], countMax = 0, maxIndex = 0;
+    
+    for (int i = 1; i < countKelas.length; i++) {
+      if (countKelas[i] > maxCount) {
+        maxCount = countKelas[i];
+        maxIndex = i;
+      }
+    }
+    
+    for (int i = 0; i < countKelas.length; i++) {
+      if (countKelas[i] == maxCount) {
+        countMax++;
+      }
+    }
+    
+    String result;
+    if (countMax > 1) {
+      result = "-none-";
+    } else { // countMax <= 1
+      result = dataCollection.getAttributeType().get(attributes.size()-1).get(maxIndex);
+    }
+    return result;
+  }
+  
+  private String findKelas(int firstIndex, int lastIndex) {
+    boolean stopLoop;
+    int maxDistance = 0, countMaxDistance = 0, countKelas[], bottomDistance, topDistance, x;
+    
+    countKelas = new int[dataCollection.getAttributeType().get(attributes.size()-1).size()];
+    for (int i = 0; i < countKelas.length; i++) {
+      countKelas[i] = 0;
+    }
+    
+    x = 0;
+    stopLoop = false;
+    bottomDistance = 0;
+    topDistance = distanceAt[0];
+    while (!stopLoop && (x < attributes.size())) {
+        if ((k > bottomDistance) && (k <= topDistance)) {
+            maxDistance = x;
+            countMaxDistance = k - bottomDistance;
+            stopLoop = true;
+        } else {
+            bottomDistance = topDistance;
+            if ((x+1) < attributes.size()) {
+                topDistance = topDistance + distanceAt[x+1];
+            }
+        }
+        x++;
+    }
+    
+    int iTemp;
+    for (int i = 0; i < dataCollection.getData().size(); i++) {
+        if (i == firstIndex) {
+            i = lastIndex + 1;
+        }
+        if (i >= firstIndex) {
+            iTemp = i - (lastIndex - firstIndex + 1);
+        } else {
+            iTemp = i;
+        }
+        if (distance.get(iTemp) < maxDistance) {
+            for (int j = 0; j < countKelas.length; j++) {
+                if (dataCollection.getDatumAt(i).getAttributes().get(attributes.size()-1).equals(dataCollection.getAttributeType().get(attributes.size()-1).get(j))) {
+                    (countKelas[j])++;
+                }
+            }
+        } else if (distance.get(iTemp).equals(maxDistance) && (countMaxDistance > 0)) {
             for (int j = 0; j < countKelas.length; j++) {
                 if (dataCollection.getDatumAt(i).getAttributes().get(attributes.size()-1).equals(dataCollection.getAttributeType().get(attributes.size()-1).get(j))) {
                     (countKelas[j])++;
