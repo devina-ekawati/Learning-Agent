@@ -17,9 +17,9 @@ import java.util.logging.Logger;
  */
 public class DataCollection {
   // Atribut
-  ArrayList<Datum> data;
-  ArrayList<String> attributeName;
-  ArrayList<ArrayList<String>> attributeType;
+  private ArrayList<Datum> data;
+  private ArrayList<String> attributeName;
+  private ArrayList<ArrayList<String>> attributeType;
   
   // Konstruktor
   public DataCollection() {
@@ -51,6 +51,21 @@ public class DataCollection {
   
   public int getTotalAttributeType(int i) {
     return attributeType.get(i).size();
+  }
+  
+  public int getTotalData() {
+    return data.size();
+  }
+  
+  // Setter
+  public void setData(ArrayList<Datum> _data) {
+    data = _data;
+  }
+  public void setAttributeName(ArrayList<String> _attributeName) {
+    attributeName = _attributeName;
+  }
+  public void setAttributeType(ArrayList<ArrayList<String>> _attributeType) {
+    attributeType = _attributeType;
   }
   
   // Method
@@ -103,5 +118,4 @@ public class DataCollection {
       Logger.getLogger(DataCollection.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
 }
