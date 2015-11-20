@@ -174,34 +174,75 @@ public class NaiveBayesLearning {
       return accuracy;
     }
     
-    public void getAccuracyTenFold() {
-      int length = dataCollection.getData().size() / 10;
+    private int[] divideByTen(int length) {
+        int[] result = new int[11];
+        for(int i=0; i<11; i++) {
+            result[i] = 0;
+        }
+        for(int i=0; i< length; i++) {
+            result[i % 10]++;
+        }
+        return result;
+    }
+    
+    public ArrayList<BigDecimal> getAccuracyTenFold() {
+      ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
+      int[] length = divideByTen(dataCollection.getData().size());
+
       ArrayList<Datum> list = dataCollection.getData();
       int start = 0;
-      int end = length - 1;
+      int end = length[0];
+      BigDecimal countTrue = new BigDecimal(0);
+      BigDecimal countFalse = new BigDecimal(0);
       for(int i=0; i<10; i++) {
-        ArrayList<Datum> list1 = new ArrayList<Datum>(list.subList(start, end));
-        ArrayList<Datum> list2 = new ArrayList<Datum>(list.subList(end+1, list.size()));
+        ArrayList<Datum> list1 = new ArrayList<Datum>(list.subList(0, start));
+        if(end >= list.size()) {
+            end = list.size();
+        }
+        ArrayList<Datum> list2 = new ArrayList<Datum>(list.subList(end, list.size()));
+        ArrayList<Datum> listTest = new ArrayList<Datum>(list.subList(start, end));
         ArrayList<Datum> listResult = new ArrayList<Datum>();
         listResult.addAll(list1);
         listResult.addAll(list2);
+        System.out.println("Total : " + (listTest.size()));
         DataCollection data = new DataCollection();
         data.setData(listResult);
         data.setAttributeName(dataCollection.getAttributeName());
         data.setAttributeType(dataCollection.getAttributeType());
-        System.out.println(list1);
-        break;
+        NaiveBayesLearning agent = new NaiveBayesLearning(data);
+        agent.fillWithAtrFrequency();
+        agent.countProbability();
+        for(Datum d : listTest) {
+            if((d.getAttributes().get(d.getAttributes().size()-1)).compareTo(agent.classify(d)) == 0) {
+                countTrue = countTrue.add(new BigDecimal(1));
+            } else {
+                countFalse = countFalse.add(new BigDecimal(1));
+            }
+        }
+        start = start + length[i];
+        end = end + length[i+1];
       }
+      System.out.println(countTrue);
+      System.out.println(countFalse);
+      accuracy.add(countTrue.divide(new BigDecimal(dataCollection.getData().size()), MathContext.DECIMAL128));
+      accuracy.add(countFalse.divide(new BigDecimal(dataCollection.getData().size()), MathContext.DECIMAL128));
+      return accuracy;
     }
     
     public static void main(String[] args) {
       DataCollection dataCol = new DataCollection();
-      dataCol.readFile("car.arff");
+      dataCol.readFile("weather.nominal.arff");
       NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
       agent.fillWithAtrFrequency();
       
       agent.countProbability();
-      agent.getAccuracyTenFold();
+      
+      
+      ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
+      accuracy = agent.getAccuracyTenFold();
+      System.out.println("Persentase benar : " + accuracy.get(0));
+      System.out.println("Persentase salah : " + accuracy.get(1));
+      System.out.println(accuracy.get(0).add(accuracy.get(1)));
       /*
       agent.printModel();
       ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
