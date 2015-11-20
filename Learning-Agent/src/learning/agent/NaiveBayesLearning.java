@@ -7,6 +7,7 @@ package learning.agent;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
+import java.io.*;
 
 /**
  *
@@ -83,6 +84,36 @@ public class NaiveBayesLearning {
           System.out.println();
         }
         System.out.println();
+      }
+    }
+    
+    public void writeModelToFile(String filename) {
+      try {
+        FileWriter fileWriter = new FileWriter(filename);
+
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        for (int i = 0; i < model.size(); i++) {
+          bufferedWriter.write("Model " + dataCollection.getAttributeName().get(i));
+          bufferedWriter.newLine();
+          bufferedWriter.write("\t");
+          for (int k = 0; k < classType.size(); k++)  {
+            bufferedWriter.write(classType.get(k) + "\t");
+          }
+          bufferedWriter.newLine();
+          for (int j = 0; j < dataCollection.getTotalAttributeType(i); j++) {
+            bufferedWriter.write(dataCollection.getAttributeType().get(i).get(j) + "\t");
+            for (int k = 0; k < classType.size(); k++)  {
+              bufferedWriter.write(model.get(i)[j][k] + "\t");
+            }
+            bufferedWriter.newLine();
+          }
+          bufferedWriter.newLine();
+        }
+
+        bufferedWriter.close();
+      }
+      catch(IOException ex) {
+          System.out.println("Error writing to file '" + filename + "'");
       }
     }
     
@@ -240,15 +271,13 @@ public class NaiveBayesLearning {
       
       ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
       accuracy = agent.getAccuracyTenFold();
-      System.out.println("Persentase benar : " + accuracy.get(0));
-      System.out.println("Persentase salah : " + accuracy.get(1));
-      System.out.println(accuracy.get(0).add(accuracy.get(1)));
-      /*
+//      System.out.println("Persentase benar : " + accuracy.get(0));
+//      System.out.println("Persentase salah : " + accuracy.get(1));
+//      System.out.println(accuracy.get(0).add(accuracy.get(1)));
       agent.printModel();
-      ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
       accuracy = agent.getAccuracyFullTraining();
+      agent.writeModelToFile("model.txt");
       System.out.println(accuracy.get(0));
-      */
     }
     
 }
