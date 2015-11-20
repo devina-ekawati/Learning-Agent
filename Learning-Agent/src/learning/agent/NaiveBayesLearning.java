@@ -47,7 +47,7 @@ public class NaiveBayesLearning {
       return bigDecimal;
     }
     
-    private void fillWithAtrFrequency() {
+    public void fillWithAtrFrequency() {
       for (Datum datum: dataCollection.getData()) {
         ArrayList<String> temp = new ArrayList<String>();
         temp = datum.getAttributes();
@@ -302,34 +302,4 @@ public class NaiveBayesLearning {
       }
       return accuracy;
     }
-    
-    public static void main(String[] args) {
-      DataCollection dataCol = new DataCollection();
-      dataCol.readFile("car.arff");
-      NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
-      agent.fillWithAtrFrequency();
-      
-      agent.countProbability();
-      
-      
-      ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
-      accuracy = agent.getAccuracyTenFold();
-      System.out.println("Persentase benar : " + accuracy.get(0));
-      System.out.println("Persentase salah : " + accuracy.get(1));
-      System.out.println(accuracy.get(0).add(accuracy.get(1)));
-      //agent.printModel();
-      
-      ArrayList<ArrayList<BigDecimal>> results = agent.getAccuracyTenFoldRate();
-      BigDecimal countTrue = new BigDecimal(0);
-      BigDecimal countFalse = new BigDecimal(0);
-      for(ArrayList<BigDecimal> arr : results) {
-          countTrue.add(arr.get(0));
-          countFalse.add(arr.get(1));
-          System.out.println(arr.get(0) + " , " + arr.get(1));
-      }
-      
-     
-      
-    }
-    
 }
