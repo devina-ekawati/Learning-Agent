@@ -205,6 +205,8 @@ public class NaiveBayesLearning {
       return accuracy;
     }
     
+    
+    
     private int[] divideByTen(int length) {
         int[] result = new int[11];
         for(int i=0; i<11; i++) {
@@ -235,7 +237,6 @@ public class NaiveBayesLearning {
         ArrayList<Datum> listResult = new ArrayList<Datum>();
         listResult.addAll(list1);
         listResult.addAll(list2);
-        System.out.println("Total : " + (listTest.size()));
         DataCollection data = new DataCollection();
         data.setData(listResult);
         data.setAttributeName(dataCollection.getAttributeName());
@@ -253,16 +254,58 @@ public class NaiveBayesLearning {
         start = start + length[i];
         end = end + length[i+1];
       }
-      System.out.println(countTrue);
-      System.out.println(countFalse);
       accuracy.add(countTrue.divide(new BigDecimal(dataCollection.getData().size()), MathContext.DECIMAL128));
       accuracy.add(countFalse.divide(new BigDecimal(dataCollection.getData().size()), MathContext.DECIMAL128));
       return accuracy;
     }
     
+    public ArrayList<ArrayList<BigDecimal>> getAccuracyTenFoldRate() {
+      ArrayList<ArrayList<BigDecimal>> accuracy = new ArrayList<ArrayList<BigDecimal>>();
+      int[] length = divideByTen(dataCollection.getData().size());
+      ArrayList<Datum> list = dataCollection.getData();
+      int start = 0;
+      int end = length[0];
+      BigDecimal countTrue = new BigDecimal(0);
+      BigDecimal countFalse = new BigDecimal(0);
+      for(int i=0; i<10; i++) {
+        ArrayList<Datum> list1 = new ArrayList<Datum>(list.subList(0, start));
+        if(end >= list.size()) {
+            end = list.size();
+        }
+        ArrayList<Datum> list2 = new ArrayList<Datum>(list.subList(end, list.size()));
+        ArrayList<Datum> listTest = new ArrayList<Datum>(list.subList(start, end));
+        ArrayList<Datum> listResult = new ArrayList<Datum>();
+        listResult.addAll(list1);
+        listResult.addAll(list2);
+        DataCollection data = new DataCollection();
+        data.setData(listResult);
+        data.setAttributeName(dataCollection.getAttributeName());
+        data.setAttributeType(dataCollection.getAttributeType());
+        NaiveBayesLearning agent = new NaiveBayesLearning(data);
+        agent.fillWithAtrFrequency();
+        agent.countProbability();
+        for(Datum d : listTest) {
+            if((d.getAttributes().get(d.getAttributes().size()-1)).compareTo(agent.classify(d)) == 0) {
+                countTrue = countTrue.add(new BigDecimal(1));
+            } else {
+                countFalse = countFalse.add(new BigDecimal(1));
+            }
+        }
+        start = start + length[i];
+        end = end + length[i+1];
+        ArrayList<BigDecimal> temp = new ArrayList<BigDecimal>();
+        temp.add(countTrue.divide(new BigDecimal(length[i]), MathContext.DECIMAL128));
+        temp.add(countFalse.divide(new BigDecimal(length[i]), MathContext.DECIMAL128));
+        countTrue = new BigDecimal(0);
+        countFalse = new BigDecimal(0);
+        accuracy.add(temp);
+      }
+      return accuracy;
+    }
+    
     public static void main(String[] args) {
       DataCollection dataCol = new DataCollection();
-      dataCol.readFile("weather.nominal.arff");
+      dataCol.readFile("car.arff");
       NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
       agent.fillWithAtrFrequency();
       
@@ -271,13 +314,22 @@ public class NaiveBayesLearning {
       
       ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
       accuracy = agent.getAccuracyTenFold();
-//      System.out.println("Persentase benar : " + accuracy.get(0));
-//      System.out.println("Persentase salah : " + accuracy.get(1));
-//      System.out.println(accuracy.get(0).add(accuracy.get(1)));
-      agent.printModel();
-      accuracy = agent.getAccuracyFullTraining();
-      agent.writeModelToFile("model.txt");
-      System.out.println(accuracy.get(0));
+      System.out.println("Persentase benar : " + accuracy.get(0));
+      System.out.println("Persentase salah : " + accuracy.get(1));
+      System.out.println(accuracy.get(0).add(accuracy.get(1)));
+      //agent.printModel();
+      
+      ArrayList<ArrayList<BigDecimal>> results = agent.getAccuracyTenFoldRate();
+      BigDecimal countTrue = new BigDecimal(0);
+      BigDecimal countFalse = new BigDecimal(0);
+      for(ArrayList<BigDecimal> arr : results) {
+          countTrue.add(arr.get(0));
+          countFalse.add(arr.get(1));
+          System.out.println(arr.get(0) + " , " + arr.get(1));
+      }
+      
+     
+      
     }
     
 }
