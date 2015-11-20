@@ -69,10 +69,13 @@ public class KNearestNeighbour {
   private void findDistance(int firstIndex, int lastIndex) {
     Integer countDistance;
     
-    for (int i = 0; i < dataCollection.getData().size(); i++) {
-      if (i == firstIndex) {
-          i = lastIndex + 1;
-      }
+    int iTemp;
+    if (firstIndex == 0) {
+        iTemp = lastIndex + 1;
+    } else {
+        iTemp = 0;
+    }
+    for (int i = iTemp; i < dataCollection.getData().size(); i++) {
       countDistance = 0;
 
       // Membandingkan jarak setiap attribute dengan attribute pada dataCollection ke-i
@@ -87,6 +90,10 @@ public class KNearestNeighbour {
           if (countDistance.equals(j)) {
               (distanceAt[j])++;
           }
+      }
+      
+      if ((i+1) == firstIndex) {
+          i = lastIndex + 1;
       }
     }
   }
@@ -187,12 +194,14 @@ public class KNearestNeighbour {
         x++;
     }
     
-    int iTemp;
-    for (int i = 0; i < dataCollection.getData().size(); i++) {
-        if (i == firstIndex) {
-            i = lastIndex + 1;
-        }
-        if (i >= firstIndex) {
+    int iTemp, iTemp2;
+    if (firstIndex == 0) {
+        iTemp2 = lastIndex + 1;
+    } else {
+        iTemp2 = 0;
+    }
+    for (int i = iTemp2; i < dataCollection.getData().size(); i++) {
+        if (i > firstIndex) {
             iTemp = i - (lastIndex - firstIndex + 1);
         } else {
             iTemp = i;
@@ -210,6 +219,10 @@ public class KNearestNeighbour {
                 }
             }
             countMaxDistance--;
+        }
+        
+        if ((i+1) == firstIndex) {
+            i = lastIndex + 1;
         }
     }
     
