@@ -16,13 +16,14 @@ public class KNNLearningAgent {
   private DataCollection dataCollection;
   private int k;
   private ArrayList<Integer> nPredictionTrue; // Jumlah prediksi kelas yang benar setiap folding
-  private static final int FOLD_NUM = 10;
+  private static int FOLD_NUM;
   
   // Konstruktor
   public KNNLearningAgent(int _k, DataCollection _dataCollection) {
     dataCollection = _dataCollection;
     k = _k;
     nPredictionTrue = new ArrayList<Integer>();
+    FOLD_NUM = dataCollection.getTotalData() / 10;
   }
   
   // Getter
@@ -35,15 +36,22 @@ public class KNNLearningAgent {
     return (float)nPredictionTrue.get(0) / (float)dataCollection.getData().size()*100f;
   }
   public float countTenFoldAccuracy(int i) {
-    return (float)nPredictionTrue.get(i) / FOLD_NUM*100f;
-  }
-  public float countAccuracyMean() {
-    int accuracySum = 0;
-    for (int i : nPredictionTrue) {
-      System.out.println("Akurasi-"+i+": " + countTenFoldAccuracy(i));
-      accuracySum += countTenFoldAccuracy(i);
+    float result;
+    if (i == nPredictionTrue.size()) {
+      // Fold terakhir
+      int lastFoldNum = dataCollection.getTotalData() % FOLD_NUM;
+      result = (float)nPredictionTrue.get(i) / (float)lastFoldNum * 100f;
+    } else {
+      result = (float)nPredictionTrue.get(i) / (float)FOLD_NUM * 100f;
     }
-    return (float) accuracySum / (float)nPredictionTrue.size()*100f;
+    return result;
+  }
+  public float countTenFoldAccuracyMean() {
+    int nTruePredictionSum = 0;
+    for (int i : nPredictionTrue) {
+      nTruePredictionSum += nPredictionTrue.get(i);
+    }
+    return (float) nTruePredictionSum / (float)nPredictionTrue.size() * 100f;
   }
           
   public void fullTrainingKNN() {
@@ -63,14 +71,22 @@ public class KNNLearningAgent {
   
   public void tenFoldKNN() {
     int i = 0;
-    while (i < dataCollection.getData().size()) {
-      // Perhitungan setiap fold
+    while (i < dataCollection.getTotalData()) {
       int nTrue = 0;
       int idxFold = 0;
-      while (idxFold<FOLD_NUM && i<dataCollection.getData().size()) {
+      int idxStartFold = i;
+      int idxLastFold = i+FOLD_NUM-1;
+      if (FOLD_NUM == 1) {
+        idxLastFold = i+ FOLD_NUM - 1;
+      } else if (idxLastFold > dataCollection.getTotalData()) {
+        // Fold terakhir
+        idxLastFold = dataCollection.getTotalData();
+      }
+      // Perhitungan setiap fold
+      while (idxFold<FOLD_NUM && i<dataCollection.getTotalData()) {
         Datum datum = dataCollection.getData().get(i);
         KNearestNeighbour knn = new KNearestNeighbour(k, dataCollection, datum);
-        String result = knn.doAlgorithm(i, i+FOLD_NUM-1);
+        String result = knn.doAlgorithm(idxStartFold, idxLastFold);
         String classAttribute = dataCollection.getData().get(i).getClassAttribute();
         if (result.equals(classAttribute)) {
           // Prediksi benar

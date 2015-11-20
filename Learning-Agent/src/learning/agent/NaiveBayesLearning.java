@@ -174,6 +174,26 @@ public class NaiveBayesLearning {
       return accuracy;
     }
     
+    public void getAccuracyTenFold() {
+      int length = dataCollection.getData().size() / 10;
+      ArrayList<Datum> list = dataCollection.getData();
+      int start = 0;
+      int end = length - 1;
+      for(int i=0; i<10; i++) {
+        ArrayList<Datum> list1 = new ArrayList<Datum>(list.subList(start, end));
+        ArrayList<Datum> list2 = new ArrayList<Datum>(list.subList(end+1, list.size()));
+        ArrayList<Datum> listResult = new ArrayList<Datum>();
+        listResult.addAll(list1);
+        listResult.addAll(list2);
+        DataCollection data = new DataCollection();
+        data.setData(listResult);
+        data.setAttributeName(dataCollection.getAttributeName());
+        data.setAttributeType(dataCollection.getAttributeType());
+        System.out.println(list1);
+        break;
+      }
+    }
+    
     public static void main(String[] args) {
       DataCollection dataCol = new DataCollection();
       dataCol.readFile("car.arff");
@@ -181,10 +201,13 @@ public class NaiveBayesLearning {
       agent.fillWithAtrFrequency();
       
       agent.countProbability();
+      agent.getAccuracyTenFold();
+      /*
       agent.printModel();
       ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
       accuracy = agent.getAccuracyFullTraining();
       System.out.println(accuracy.get(0));
+      */
     }
     
 }

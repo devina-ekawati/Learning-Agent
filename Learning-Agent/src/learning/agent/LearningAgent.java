@@ -27,7 +27,7 @@ public class LearningAgent {
     // Ten-Fold Cross Validation Agent
     KNNLearningAgent tenFoldAgent = new KNNLearningAgent(5, data);
     tenFoldAgent.tenFoldKNN();
-    System.out.println("Akurasi total: " + tenFoldAgent.countFullTrainingAccuracy());
+    System.out.println("Akurasi total: " + tenFoldAgent.countTenFoldAccuracyMean());
     
     // Testing KNN
 //    ArrayList<String> test = new ArrayList<String>();
