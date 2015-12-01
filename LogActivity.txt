@@ -1,0 +1,4 @@
+Irene Wiliudarsan : membuat algoritma K-NN, membuat main program
+William Sentosa : membuat algoritma Naive Bayes
+Angela Lynn : membuat algoritma K-NN, membuat algoritma untuk membaca file
+Devina Ekawati : membuat algoritma Naive Bayes
