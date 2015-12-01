@@ -11,10 +11,14 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import javax.swing.*;
 import java.util.*;
 import java.util.logging.*;
 import javax.imageio.ImageIO;
+import learning.agent.ConfusionMatrix;
+import learning.agent.DataCollection;
+import learning.agent.NaiveBayesLearning;
 
 /**
  *
@@ -352,11 +356,25 @@ public class UserInterface {
                         public void actionPerformed(ActionEvent e) {
                             Object source = e.getSource();
                             if (source instanceof Component) {
-                                setup.dispose();
-                                showImplementationResult();
-                                frame.setContentPane(implementationUIResult);
-                                frame.invalidate();
-                                frame.validate();
+                                
+                                if (String.valueOf(algorithm.getSelectedItem()).compareTo("K-NN") == 0) {
+                                  if (k.getText().length() > 0) {
+                                    setup.dispose();
+                                    showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()));
+                                    frame.setContentPane(implementationUIResult);
+                                    frame.invalidate();
+                                    frame.validate();
+                                  } else {
+                                    JOptionPane.showMessageDialog(frame, "Please enter k value", "Setup error", JOptionPane.ERROR_MESSAGE);
+                                  }
+                                } else {
+                                  setup.dispose();
+                                  showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()),0);
+                                  frame.setContentPane(implementationUIResult);
+                                  frame.invalidate();
+                                  frame.validate();
+                                }
+                                
                             }
                         }
                     });
@@ -381,7 +399,7 @@ public class UserInterface {
         frame.add(implementationUI);
     }
 
-    public void showImplementationResult() {
+    public void showImplementationResult(String _path, String _algorithm, int _k) {
         implementationUIResult.setLayout(new BorderLayout());
         // Menambah background
         BackgroundPane bgPane;
@@ -394,13 +412,23 @@ public class UserInterface {
         };
         
         // Container
-        TransparentJPanel container = new TransparentJPanel();
-        container.setLayout(new GridBagLayout());
+        TransparentJPanel container1 = new TransparentJPanel();
+        container1.setLayout(new GridBagLayout());
+        container1.setPreferredSize(new Dimension(700, 650));
         GridBagConstraints c = new GridBagConstraints();
+        TransparentJPanel container2 = new TransparentJPanel();
+        container2.setLayout(new GridBagLayout());
         
         // Tombol back
         JButton back = new JButton("Back");
-        container.add(back);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.insets = new Insets(0,0,0,0);
+        c.anchor = GridBagConstraints.LAST_LINE_START;
+        container2.add(back);
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -422,22 +450,24 @@ public class UserInterface {
             Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
-        logoLabel.setHorizontalAlignment(JLabel.CENTER);
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 0;
-        c.weighty = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.insets = new Insets(0,0,0,0);
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        container.add(logoLabel, c);
+        container2.add(logoLabel, c);
         // Textbox untuk file
         JTextField file = new JTextField(30);
         c.gridx = 1;
         c.gridy = 0;
-        c.weightx = 0;
-        c.weighty = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 2;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         //c.insets = new Insets(0,0,0,0);
-        container.add(file, c);
+        container2.add(file, c);
         // Button browse
         JButton browse = new JButton("Browse");
         browse.addActionListener(new ActionListener() {
@@ -452,33 +482,147 @@ public class UserInterface {
                 }
             }
         });
-        c.gridx = 2;
+        c.gridx = 3;
         c.gridy = 0;
-        c.weightx = 0;
-        c.weighty = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        container.add(browse, c);
+        container2.add(browse, c);
+        JLabel algorithmLabel = new JLabel("Algorithm");
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(algorithmLabel, c);
+        
         // Dropdown untuk algoritma
         String[] algorithms = {"K-NN","Naive Bayes"};
         final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
-        c.gridx = 0;
+        c.gridx = 1;
         c.gridy = 1;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
-        container.add(algorithm, c);
+        container2.add(algorithm, c);
+        
+        JLabel kLabel = new JLabel("K");
+        JTextField k = new JTextField(2);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(kLabel,c);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(k,c);
+        algorithm.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            if (val.compareTo("K-NN") == 0) {
+                kLabel.setVisible(true);
+                k.setVisible(true);
+            } else {
+                kLabel.setVisible(false);
+                k.setVisible(false);
+            }
+           }
+        });
+        
+        JLabel testLabel = new JLabel("Test option");
+        c.gridx = 2;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(testLabel, c);
+        
         // Dropdown untuk method
         String[] methods = {"Full Training","10 Folds"};
         final JComboBox<String> method = new JComboBox<String>(methods);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.CENTER;
+        c.gridx = 3;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 2;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
-        container.add(method, c);
-        bgPane.add(container);
+        container2.add(method, c);
+        
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        c.fill = GridBagConstraints.BOTH;
+        container1.add(container2, c);
+        if (_algorithm.compareTo("Naive Bayes") == 0) {
+          // Membuat tabbedpane untuk menampilkan hasil
+          JTabbedPane tabbedPane = new JTabbedPane();
+          JPanel panel1 = new JPanel();
+          DataCollection dataCol = new DataCollection();
+          dataCol.readFile("car.arff");
+          dataCol.randomizeData();
+          NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
+          agent.fillWithAtrFrequency();
+          agent.countProbability();
+          panel1.setLayout(new GridLayout(2, dataCol.getAttributeName().size()-1));
+          for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
+            panel1.add(new JLabel(dataCol.getAttributeName().get(i)));
+          }
+          for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
+            BigDecimal[][] model = agent.getModel().get(i);
+            ArrayList<String> classes = dataCol.getAttributeType().get(dataCol.getAttributeName().size()-1);
+            ArrayList<String> types = dataCol.getAttributeType().get(i);
+            NaiveBayesModelPanel panel = new NaiveBayesModelPanel(model, classes, types);
+            panel.initComponent();
+            panel1.add(panel);
+          }
+          
+          JScrollPane scrollPane = new JScrollPane(panel1);
+          scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+          scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+          scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+          tabbedPane.add(scrollPane, "Model");
+
+          JPanel panel2 = new JPanel();
+          ConfusionMatrix matrix = agent.getFullTrainingConfusionMatrix();
+          ConfusionMatrixPanel panel = new ConfusionMatrixPanel(matrix);
+          panel.initComponent();
+          panel2.add(panel);
+          tabbedPane.add(panel2, "Confusion Matrix");
+          tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
+          c.gridx = 0;
+          c.gridy = 1;
+          c.weightx = 1;
+          c.weighty = 1;
+          c.ipady = 250;
+          c.insets = new Insets(0,0,50,0);
+          c.anchor = GridBagConstraints.LINE_START;
+          c.fill = GridBagConstraints.HORIZONTAL;
+          container1.add(tabbedPane, c);
+          
+        } else if (_algorithm.compareTo("K-NN") == 0) {
+          
+        }
+        bgPane.add(container1);
         implementationUIResult.add(bgPane);
         frame.add(implementationUIResult);
 
