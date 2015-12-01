@@ -39,9 +39,10 @@ public class KNearestNeighbour {
   }
   
   public String doAlgorithm(int firstIndex, int lastIndex) {
-      findDistance(firstIndex, lastIndex);
-      String result = findKelas(firstIndex, lastIndex);
-      return result;
+    //System.out.println("Index: " + firstIndex + " - " + lastIndex);
+    findDistance(firstIndex, lastIndex);
+    String result = findKelas(firstIndex, lastIndex);
+    return result;
   }
   
   private void findDistance() {
@@ -77,7 +78,6 @@ public class KNearestNeighbour {
     }
     for (int i = iTemp; i < dataCollection.getData().size(); i++) {
       countDistance = 0;
-
       // Membandingkan jarak setiap attribute dengan attribute pada dataCollection ke-i
       for (int j = 0; j < (attributes.size()-1); j++) {
           if (!attributes.get(j).equals(dataCollection.getDatumAt(i).getAttributes().get(j))) {
@@ -93,7 +93,7 @@ public class KNearestNeighbour {
       }
       
       if ((i+1) == firstIndex) {
-          i = lastIndex + 1;
+          i = lastIndex;
       }
     }
   }
@@ -222,7 +222,7 @@ public class KNearestNeighbour {
         }
         
         if ((i+1) == firstIndex) {
-            i = lastIndex + 1;
+            i = lastIndex;
         }
     }
     
