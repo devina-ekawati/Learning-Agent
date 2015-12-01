@@ -347,7 +347,19 @@ public class UserInterface {
                     c.anchor = GridBagConstraints.LAST_LINE_END;
                     c.insets = new Insets(120,0,0,0);
                     panel2.add(ok, c);
-
+                    
+                    ok.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            Object source = e.getSource();
+                            if (source instanceof Component) {
+                                setup.dispose();
+                                showImplementationResult();
+                                frame.setContentPane(implementationUIResult);
+                                frame.invalidate();
+                                frame.validate();
+                            }
+                        }
+                    });
                     setup.add(panel2);
                     setup.setFocusable(true);
                     setup.setSize(250, 250);
@@ -402,15 +414,21 @@ public class UserInterface {
             }
         });
 
-        // Label untuk icon
-        JLabel icon = new JLabel("ICON");
-        icon.setHorizontalAlignment(JLabel.CENTER);
+        // Label untuk logo
+        BufferedImage logoImage = null;
+        try {
+            logoImage = ImageIO.read(new File("assets/header-logo.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
+        logoLabel.setHorizontalAlignment(JLabel.CENTER);
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 0;
         c.weighty = 0;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        implementationUIResult.add(icon, c);
+        container.add(logoLabel, c);
         // Textbox untuk file
         JTextField file = new JTextField(30);
         c.gridx = 1;
@@ -419,7 +437,7 @@ public class UserInterface {
         c.weighty = 0;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         //c.insets = new Insets(0,0,0,0);
-        implementationUIResult.add(file, c);
+        container.add(file, c);
         // Button browse
         JButton browse = new JButton("Browse");
         browse.addActionListener(new ActionListener() {
@@ -439,7 +457,7 @@ public class UserInterface {
         c.weightx = 0;
         c.weighty = 0;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        implementationUIResult.add(browse, c);
+        container.add(browse, c);
         // Dropdown untuk algoritma
         String[] algorithms = {"K-NN","Naive Bayes"};
         final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
@@ -449,7 +467,7 @@ public class UserInterface {
         c.weighty = 0;
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(0,0,0,0);
-        implementationUI.add(algorithm, c);
+        container.add(algorithm, c);
         // Dropdown untuk method
         String[] methods = {"Full Training","10 Folds"};
         final JComboBox<String> method = new JComboBox<String>(methods);
@@ -459,7 +477,9 @@ public class UserInterface {
         c.weighty = 0;
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(0,0,0,0);
-        implementationUI.add(method, c);
+        container.add(method, c);
+        bgPane.add(container);
+        implementationUIResult.add(bgPane);
         frame.add(implementationUIResult);
 
     }
