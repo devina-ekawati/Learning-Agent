@@ -37,6 +37,10 @@ public class NaiveBayesLearning {
       }
     }
     
+    public ArrayList<BigDecimal[][]> getModel() {
+      return model;
+    }
+    
     private BigDecimal[][] makeBigDecimalMatrix(int rowEff, int colEff) {
       BigDecimal[][] bigDecimal = new BigDecimal[rowEff][colEff];
       for (int i = 0; i < rowEff; i++) {

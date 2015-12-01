@@ -66,55 +66,10 @@ public class UserInterface {
       public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source instanceof Component) {
-            JDialog setup = new JDialog(frame, true);
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(7,2,10,10));
-            
-            JLabel buyLabel = new JLabel("Buying");
-            panel.add(buyLabel);
-            String[] buyingAtr = {"vhigh","high","med","low"};
-            final JComboBox<String> buying = new JComboBox<String>(buyingAtr);
-            panel.add(buying);
-            
-            JLabel maintLabel = new JLabel("Maint");
-            panel.add(maintLabel);
-            String[] maintAtr = {"vhigh","high","med","low"};
-            final JComboBox<String> maint = new JComboBox<String>(maintAtr);
-            panel.add(maint);
-            
-            JLabel doorsLabel = new JLabel("Doors");
-            panel.add(doorsLabel);
-            String[] doorsAtr = {"2.0","3.0","4.0","5more"};
-            final JComboBox<String> doors = new JComboBox<String>(doorsAtr);
-            panel.add(doors);
-            
-            JLabel personsLabel = new JLabel("Persons");
-            panel.add(personsLabel);
-            String[] personsAtr = {"2.0","4.0","more"};
-            final JComboBox<String> persons = new JComboBox<String>(personsAtr);
-            panel.add(persons);
-            
-            JLabel logbootLabel = new JLabel("Lug_boot");
-            panel.add(logbootLabel);
-            String[] lugbootAtr = {"small","med","big"};
-            final JComboBox<String> lugboot = new JComboBox<String>(lugbootAtr);
-            panel.add(lugboot);
-            
-            JLabel safetyLabel = new JLabel("Safety");
-            panel.add(safetyLabel);
-            String[] safetyAtr = {"low", "med","high"};
-            final JComboBox<String> safety = new JComboBox<String>(safetyAtr);
-            panel.add(safety);
-            
-            panel.add(new Label());
-            JButton ok = new JButton("OK");
-            ok.setSize(new Dimension(5,5));
-            panel.add(ok);
-            
-            setup.add(panel);
-            setup.setFocusable(true);
-            setup.setSize(300, 300);
-            setup.setVisible(true);
+            classify();
+            frame.setContentPane(applicationUI);
+            frame.invalidate();
+            frame.validate();
         }
       }
     });
@@ -234,23 +189,46 @@ public class UserInterface {
         Object source = e.getSource();
         if (source instanceof Component) {
             JDialog setup = new JDialog(frame, true);
-            JPanel panel1 = new JPanel();
-            
-            panel1.setLayout(new GridLayout(3,2, 10, 10));
-            JLabel algorithmLabel = new JLabel("Algorithm");
-            algorithmLabel.setHorizontalAlignment(JLabel.CENTER);
-            panel1.add(algorithmLabel);
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            panel.add(new JLabel("Algorithm"), c);
             
             String[] algorithms = {"K-NN","Naive Bayes"};
             final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
-            panel1.add(algorithm);
+            c.gridx = 0;
+            c.gridy = 1;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            c.gridwidth = 1;
+            c.insets = new Insets(0,0,0,0);
+            panel.add(algorithm, c);
             
             JLabel kLabel = new JLabel("k");
-            kLabel.setHorizontalAlignment(JLabel.CENTER);
-            panel1.add(kLabel);
+            c.gridx = 0;
+            c.gridy = 2;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            c.gridwidth = 1;
+            panel.add(kLabel, c);
             
             JTextField k = new JTextField(2);
-            panel1.add(k, c);
+            c.gridx = 1;
+            c.gridy = 2;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            c.gridwidth = 1;
+            c.insets = new Insets(0,0,0,0);
+            panel.add(k, c);
             algorithm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               String val = String.valueOf(algorithm.getSelectedItem());
@@ -264,34 +242,38 @@ public class UserInterface {
              }
             });
             
-            JLabel testLabel = new JLabel("Test options");
-            testLabel.setHorizontalAlignment(JLabel.CENTER);
-            panel1.add(testLabel);
-            
-            String[] methods = {"Full Training","10 Folds"};
-            final JComboBox<String> method = new JComboBox<String>(methods);
-            panel1.add(method);
-            
-            JPanel panel2 = new JPanel();
-            panel2.setLayout(new GridBagLayout());
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.CENTER;
-            panel2.add(panel1, c);
-            
-            
-            JButton ok = new JButton("OK");
-            c.gridx = 0;
+            c.gridx = 1;
             c.gridy = 0;
             c.weightx = 1;
             c.weighty = 1;
-            c.anchor = GridBagConstraints.LAST_LINE_END;
-            panel2.add(ok, c);
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            panel.add(new JLabel("Test options"), c);
             
-            setup.add(panel2);
+            String[] methods = {"Full Training","10 Folds"};
+            final JComboBox<String> method = new JComboBox<String>(methods);
+            c.gridx = 1;
+            c.gridy = 1;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.CENTER;
+            c.insets = new Insets(0,0,0,0);
+            panel.add(method, c);
+            
+            JButton ok = new JButton("OK");
+            c.gridx = 0;
+            c.gridy = 4;
+            c.weightx = 1;
+            c.weighty = 1;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.PAGE_END;
+            c.insets = new Insets(0,0,0,0);
+            panel.add(ok, c);
+            
+            setup.add(panel);
             setup.setFocusable(true);
-            setup.setSize(200, 200);
+            setup.setSize(300, 300);
             setup.setVisible(true);
         }
       }
@@ -334,6 +316,7 @@ public class UserInterface {
         int returnValue = fileChooser.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
+          System.out.println(selectedFile.getName());
         }
       }
     });
