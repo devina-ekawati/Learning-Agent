@@ -47,7 +47,7 @@ public class NaiveBayesLearning {
       return bigDecimal;
     }
     
-    private void fillWithAtrFrequency() {
+    public void fillWithAtrFrequency() {
       for (Datum datum: dataCollection.getData()) {
         ArrayList<String> temp = new ArrayList<String>();
         temp = datum.getAttributes();
