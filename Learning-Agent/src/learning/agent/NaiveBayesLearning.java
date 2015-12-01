@@ -205,7 +205,32 @@ public class NaiveBayesLearning {
       return accuracy;
     }
     
+    private int searchIndex(List<String> list, String value ) {
+        int i = 0;
+        for(i=0; i<list.size(); i++) {
+            if(list.get(i).equals(value)) return i;
+        }
+        return -1;
+    }
     
+    public ConfusionMatrix getFullTrainingConfusionMatrix() {
+      List<String> classes = dataCollection.getAttributeType().get(dataCollection.getAttributeName().size()-1);
+      ConfusionMatrix mat = new ConfusionMatrix(classes);
+      int row, col;
+      int[][] tab = new int [classes.size()][classes.size()];
+      ArrayList<String> temp;
+      for (int i = 0; i < dataCollection.getData().size(); i++) {
+        String result = classify(dataCollection.getData().get(i));  
+        col = searchIndex(classes, result);
+        temp = dataCollection.getData().get(i).getAttributes();
+        // Memperoleh kelas dan indeks dari jenis kelas tersebut
+        String kelas = temp.get(temp.size()-1);
+        row = searchIndex(classes, kelas);
+        tab[row][col]++;
+      }
+      mat.setMatrix(tab);
+      return mat;
+    }
     
     private int[] divideByTen(int length) {
         int[] result = new int[11];
@@ -221,7 +246,6 @@ public class NaiveBayesLearning {
     public ArrayList<BigDecimal> getAccuracyTenFold() {
       ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
       int[] length = divideByTen(dataCollection.getData().size());
-
       ArrayList<Datum> list = dataCollection.getData();
       int start = 0;
       int end = length[0];
@@ -303,17 +327,67 @@ public class NaiveBayesLearning {
       return accuracy;
     }
     
+    public ConfusionMatrix getTenFoldConfusionMatrix() {
+      List<String> classes = dataCollection.getAttributeType().get(dataCollection.getAttributeName().size()-1);
+      ConfusionMatrix mat = new ConfusionMatrix(classes);
+      int row, col;
+      int[][] tab = new int [classes.size()][classes.size()];
+      ArrayList<String> temp;
+      int[] length = divideByTen(dataCollection.getData().size());
+
+      ArrayList<Datum> list = dataCollection.getData();
+      int start = 0;
+      int end = length[0];
+ 
+      for(int i=0; i<10; i++) {
+        ArrayList<Datum> list1 = new ArrayList<Datum>(list.subList(0, start));
+        if(end >= list.size()) {
+            end = list.size();
+        }
+        ArrayList<Datum> list2 = new ArrayList<Datum>(list.subList(end, list.size()));
+        ArrayList<Datum> listTest = new ArrayList<Datum>(list.subList(start, end));
+        ArrayList<Datum> listResult = new ArrayList<Datum>();
+        listResult.addAll(list1);
+        listResult.addAll(list2);
+        DataCollection data = new DataCollection();
+        data.setData(listResult);
+        data.setAttributeName(dataCollection.getAttributeName());
+        data.setAttributeType(dataCollection.getAttributeType());
+        NaiveBayesLearning agent = new NaiveBayesLearning(data);
+        agent.fillWithAtrFrequency();
+        agent.countProbability();
+        for(Datum d : listTest) {
+            row = searchIndex(classes, d.getAttributes().get(d.getAttributes().size()-1)); 
+            col = searchIndex(classes, agent.classify(d));
+            tab[row][col]++;
+        }
+        start = start + length[i];
+        end = end + length[i+1];
+      }
+      mat.setMatrix(tab);
+      return mat;
+    }
+    
     public static void main(String[] args) {
       DataCollection dataCol = new DataCollection();
       dataCol.readFile("car.arff");
+      dataCol.randomizeData();
       NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
       agent.fillWithAtrFrequency();
       
       agent.countProbability();
       
       
-      ArrayList<BigDecimal> accuracy = new ArrayList<BigDecimal>();
+      ArrayList<BigDecimal> accuracy;
+      
+      accuracy = agent.getAccuracyFullTraining();
+      System.out.println("*** Akurasi Full Training ***");
+      System.out.println("Persentase benar : " + accuracy.get(0));
+      System.out.println("Persentase salah : " + accuracy.get(1));
+      System.out.println(accuracy.get(0).add(accuracy.get(1)));
+      
       accuracy = agent.getAccuracyTenFold();
+      System.out.println("*** Akurasi Ten Fold Test ***");
       System.out.println("Persentase benar : " + accuracy.get(0));
       System.out.println("Persentase salah : " + accuracy.get(1));
       System.out.println(accuracy.get(0).add(accuracy.get(1)));
@@ -328,6 +402,14 @@ public class NaiveBayesLearning {
           System.out.println(arr.get(0) + " , " + arr.get(1));
       }
       
+      System.out.println("**** Full Training Confusion Matrix ****");
+      ConfusionMatrix mat;
+      mat = agent.getFullTrainingConfusionMatrix();
+      mat.display();
+      
+      System.out.println("**** Ten Fold Confusion Matrix ****");
+      mat = agent.getTenFoldConfusionMatrix();
+      mat.display();
      
       
     }

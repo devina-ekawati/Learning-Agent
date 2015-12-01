@@ -69,6 +69,11 @@ public class DataCollection {
   }
   
   // Method
+  
+  public void randomizeData() {
+      Collections.shuffle(data);
+  }
+  
   public void readFile(String fileName) {
     ArrayList<String> attributes;
     ArrayList<String> value;
