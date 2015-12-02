@@ -98,6 +98,12 @@ public class UserInterface {
         classify.setMinimumSize(new Dimension(130, 50));
         classify.setMaximumSize(new Dimension(130, 50));
         classify.setPreferredSize(new Dimension(130, 50));
+        classify.setFocusPainted(false);
+        classify.setContentAreaFilled(false);
+        classify.setOpaque(false);
+        classify.setForeground(Color.white);
+        classify.setFont(new Font("Roboto", Font.BOLD, 16));
+        classify.setBorder(BorderFactory.createLineBorder(Color.white));
         classify.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -223,6 +229,12 @@ public class UserInterface {
         implementation.setMinimumSize(new Dimension(20, 20));
         implementation.setMaximumSize(new Dimension(20, 20));
         implementation.setPreferredSize(new Dimension(20, 20));
+        implementation.setFocusPainted(false);
+        implementation.setContentAreaFilled(false);
+        implementation.setOpaque(false);
+        implementation.setForeground(Color.white);
+        implementation.setFont(new Font("Roboto", Font.BOLD, 16));
+        implementation.setBorder(BorderFactory.createLineBorder(Color.white));
         implementation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -275,7 +287,20 @@ public class UserInterface {
         
         // Tombol back
         JButton back = new JButton("Back");
-        container.add(back);
+        back.setFocusPainted(false);
+        back.setContentAreaFilled(false);
+        back.setOpaque(false);
+        back.setForeground(Color.white);
+        back.setMinimumSize(new Dimension(50, 30));
+        back.setMaximumSize(new Dimension(50, 30));
+        back.setPreferredSize(new Dimension(50, 30));
+        back.setBorder(BorderFactory.createLineBorder(Color.white));
+        back.setFont(new Font("Roboto", Font.BOLD, 14));
+        c.anchor = GridBagConstraints.LAST_LINE_START;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.insets = new Insets(100,0,0,0);
+        container.add(back,c);
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -325,7 +350,15 @@ public class UserInterface {
         
         // Button browse
         JButton browse = new JButton("Browse");
-        browse.setFont(new Font("Roboto", Font.PLAIN, 14));
+        browse.setFocusPainted(false);
+        browse.setContentAreaFilled(false);
+        browse.setOpaque(false);
+        browse.setForeground(Color.white);
+        browse.setMinimumSize(new Dimension(70, 30));
+        browse.setMaximumSize(new Dimension(70, 30));
+        browse.setPreferredSize(new Dimension(70, 30));
+        browse.setBorder(BorderFactory.createLineBorder(Color.white));
+        browse.setFont(new Font("Roboto", Font.BOLD, 14));
         browse.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -349,7 +382,15 @@ public class UserInterface {
 
         // Button untuk reset text box
         JButton reset = new JButton("Reset");
-        reset.setFont(new Font("Roboto", Font.PLAIN, 14));
+        reset.setFocusPainted(false);
+        reset.setContentAreaFilled(false);
+        reset.setOpaque(false);
+        reset.setForeground(Color.white);
+        reset.setMinimumSize(new Dimension(50, 30));
+        reset.setMaximumSize(new Dimension(50, 30));
+        reset.setPreferredSize(new Dimension(50, 30));
+        reset.setBorder(BorderFactory.createLineBorder(Color.white));
+        reset.setFont(new Font("Roboto", Font.BOLD, 14));
         c.gridx = 0;
         c.gridy = 1;
         c.weightx = 1;
@@ -366,7 +407,15 @@ public class UserInterface {
 
         // Button untuk classify
         JButton classify = new JButton("Classify");
-        classify.setFont(new Font("Roboto", Font.PLAIN, 14));
+        classify.setFocusPainted(false);
+        classify.setContentAreaFilled(false);
+        classify.setOpaque(false);
+        classify.setForeground(Color.white);
+        classify.setMinimumSize(new Dimension(80, 30));
+        classify.setMaximumSize(new Dimension(80, 30));
+        classify.setPreferredSize(new Dimension(80, 30));
+        classify.setBorder(BorderFactory.createLineBorder(Color.white));
+        classify.setFont(new Font("Roboto", Font.BOLD, 14));
         classify.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -531,6 +580,7 @@ public class UserInterface {
                 int returnValue = fileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
+                    file.setText(fileChooser.getSelectedFile().getAbsolutePath());
                 }
             }
         });
@@ -629,6 +679,24 @@ public class UserInterface {
         c.insets = new Insets(0,0,0,0);
         container2.add(classify, c);
         
+        classify.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            int _k;
+            if (val.compareTo("K-NN") == 0) {
+              _k = Integer.parseInt(k.getText());
+            } else {
+              _k = 0;
+            }
+            
+            showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()),_k,String.valueOf(method.getSelectedItem()));
+            frame.setContentPane(implementationUIResult);
+            frame.invalidate();
+            frame.validate();
+            
+           }
+        });
+        
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
@@ -661,8 +729,9 @@ public class UserInterface {
         });
         if (_algorithm.compareTo("Naive Bayes") == 0) {
           // Membuat tabbedpane untuk menampilkan hasil
+          UIManager.put("TabbedPane.contentOpaque", false);
           JTabbedPane tabbedPane = new JTabbedPane();
-          JPanel panel1 = new JPanel();
+          TransparentJPanel panel1 = new TransparentJPanel();
           DataCollection dataCol = new DataCollection();
           dataCol.readFile(_path);
           dataCol.randomizeData();
@@ -671,7 +740,12 @@ public class UserInterface {
           agent.countProbability();
           panel1.setLayout(new GridLayout(2, dataCol.getAttributeName().size()-1));
           for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
-            panel1.add(new JLabel(dataCol.getAttributeName().get(i)));
+            JLabel attrLabel = new JLabel(dataCol.getAttributeName().get(i));
+            attrLabel.setHorizontalAlignment(JLabel.CENTER);
+            attrLabel.setVerticalAlignment(JLabel.BOTTOM);
+            attrLabel.setFont(new Font("Roboto", Font.BOLD, 15));
+            attrLabel.setForeground(Color.white);
+            panel1.add(attrLabel);
           }
           for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
             BigDecimal[][] model = agent.getModel().get(i);
@@ -683,6 +757,8 @@ public class UserInterface {
           }
           
           JScrollPane scrollPane = new JScrollPane(panel1);
+          scrollPane.setOpaque(false);
+          scrollPane.getViewport().setOpaque(false);
           scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -699,7 +775,7 @@ public class UserInterface {
           }
           agent.getAccuracyFullTraining();
           
-          JPanel panel2 = new JPanel();
+          TransparentJPanel panel2 = new TransparentJPanel();
           
           ConfusionMatrixPanel panel = new ConfusionMatrixPanel(matrix);
           panel.initComponent();
@@ -707,9 +783,13 @@ public class UserInterface {
           panel2.add(panel);
           panel.setBounds(new Rectangle(new Point(30,70), panel.getPreferredSize()));
           JLabel label1 = new JLabel("Confusion Matrix");
+          label1.setForeground(Color.white);
+          label1.setFont(new Font("Roboto", Font.BOLD, 18));
           panel2.add(label1);
           label1.setBounds(new Rectangle(new Point(30,50), label1.getPreferredSize()));
           JLabel accuracyLabel = new JLabel("Evaluation of training set");
+          accuracyLabel.setForeground(Color.white);
+          accuracyLabel.setFont(new Font("Roboto", Font.BOLD, 18));
           panel2.add(accuracyLabel);
           accuracyLabel.setBounds(new Rectangle(new Point(400,50), accuracyLabel.getPreferredSize()));        
           agent.getAccuracyFullTraining();
@@ -717,11 +797,15 @@ public class UserInterface {
           MathContext mc = new MathContext(4);
           
           JLabel label2 = new JLabel("Correctly classified class    : " + accuracy.get(0).multiply(new BigDecimal(100), mc) + "%");
+          label2.setForeground(Color.white);
+          label2.setFont(new Font("Roboto", Font.PLAIN, 14));
           panel2.add(label2);
-          label2.setBounds(400, 70, 200, 10);
+          label2.setBounds(400, 70, 300, 20);
           JLabel label3 = new JLabel("Incorrectly classified class : " + accuracy.get(1).multiply(new BigDecimal(100), mc) + "%");
+          label3.setForeground(Color.white);
+          label3.setFont(new Font("Roboto", Font.PLAIN, 14));
           panel2.add(label3);
-          label3.setBounds(400, 90, 200, 10);
+          label3.setBounds(400, 90, 300, 20);
           
           tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
           c.gridx = 0;
@@ -758,9 +842,13 @@ public class UserInterface {
           resultPanel.add(panel);
           panel.setBounds(new Rectangle(new Point(30,70), panel.getPreferredSize()));
           JLabel label1 = new JLabel("Confusion Matrix");
+          label1.setForeground(Color.white);
+          label1.setFont(new Font("Roboto", Font.BOLD, 18));
           resultPanel.add(label1);
           label1.setBounds(new Rectangle(new Point(30,50), label1.getPreferredSize()));
           JLabel accuracyLabel = new JLabel("Evaluation of training set");
+          accuracyLabel.setForeground(Color.white);
+          accuracyLabel.setFont(new Font("Roboto", Font.BOLD, 18));
           resultPanel.add(accuracyLabel);
           accuracyLabel.setBounds(new Rectangle(new Point(400,50), accuracyLabel.getPreferredSize()));
                    
@@ -810,8 +898,7 @@ public class UserInterface {
         // Container
         TransparentJPanel container1 = new TransparentJPanel();
         container1.setLayout(new BoxLayout(container1, BoxLayout.Y_AXIS));
-        container1.setPreferredSize(new Dimension(700, 650));
-        GridBagConstraints c = new GridBagConstraints();
+        container1.setPreferredSize(new Dimension(700, 450));
         TransparentJPanel container2 = new TransparentJPanel();
         container2.setLayout(new FlowLayout());
 
@@ -822,9 +909,6 @@ public class UserInterface {
         } catch (IOException ex) {
             Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 10;
         JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
         container2.add(logoLabel);
         
@@ -914,15 +998,6 @@ public class UserInterface {
         
         // Tombol Classify
         JButton classify = new JButton("Classify");
-        classify.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            String val = String.valueOf(algorithm.getSelectedItem());
-            showClassifyResult(String.valueOf(_buying.getSelectedItem()), String.valueOf(_maint.getSelectedItem()), String.valueOf(_doors.getSelectedItem()), String.valueOf(_persons.getSelectedItem()), String.valueOf(_lugboot.getSelectedItem()), String.valueOf(_safety.getSelectedItem()), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()));
-            frame.setContentPane(implementationUIResult);
-            frame.invalidate();
-            frame.validate();
-           }
-        });
         algorithmHeader.add(classify);
         container2.add(algorithmHeader);
         container1.add(container2);
@@ -936,18 +1011,23 @@ public class UserInterface {
           NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
           agent.fillWithAtrFrequency();
           agent.countProbability();
-          JPanel panel1 = new JPanel();
+          TransparentJPanel panel1 = new TransparentJPanel();
           panel1.setLayout(new GridLayout(2, dataCol.getAttributeName().size()-1));
           for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
-            panel1.add(new JLabel(dataCol.getAttributeName().get(i)));
+            JLabel attrLabel = new JLabel(dataCol.getAttributeName().get(i));
+            attrLabel.setHorizontalAlignment(JLabel.CENTER);
+            attrLabel.setVerticalAlignment(JLabel.BOTTOM);
+            attrLabel.setFont(new Font("Roboto", Font.BOLD, 15));
+            attrLabel.setForeground(Color.white);
+            panel1.add(attrLabel);
           }
           for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
             BigDecimal[][] model = agent.getModel().get(i);
             ArrayList<String> classes = dataCol.getAttributeType().get(dataCol.getAttributeName().size()-1);
             ArrayList<String> types = dataCol.getAttributeType().get(i);
-            NaiveBayesModelPanel panel = new NaiveBayesModelPanel(model, classes, types);
-            panel.initComponent();
-            panel1.add(panel);
+            NaiveBayesModelPanel panel2 = new NaiveBayesModelPanel(model, classes, types);
+            panel2.initComponent();
+            panel1.add(panel2);
           }
           
           ArrayList<String> atr = new ArrayList<String>();
@@ -958,25 +1038,19 @@ public class UserInterface {
           atr.add(lugboot);
           atr.add(safety);
           Datum d = new Datum(atr);
-          JLabel _class = new JLabel(agent.classify(d));
-          c.gridx = 0;
-          c.gridy = 0;
-          c.weightx = 1;
-          c.ipady = 220;
-          c.anchor = GridBagConstraints.LINE_START;
-          c.fill = GridBagConstraints.HORIZONTAL;
-          container1.add(_class);
+          JLabel classResult = new JLabel("Class result: " + agent.classify(d));
+          classResult.setAlignmentX(Component.CENTER_ALIGNMENT);
+          classResult.setFont(new Font("Roboto", Font.BOLD, 20));
+          classResult.setForeground(Color.white);
+          container1.add(classResult);
           
           JScrollPane scrollPane = new JScrollPane(panel1);
+          scrollPane.setOpaque(false);
+          scrollPane.getViewport().setOpaque(false);
           scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-          c.gridx = 0;
-          c.gridy = 1;
-          c.ipady = 220;
-          c.anchor = GridBagConstraints.LINE_START;
-          c.fill = GridBagConstraints.HORIZONTAL;
-          container1.add(scrollPane, c);
+          container1.add(scrollPane);
         } else if (_algorithm.compareTo("K-NN") == 0) {
           ArrayList<String> atr = new ArrayList<String>();
           atr.add(buying);
@@ -998,6 +1072,23 @@ public class UserInterface {
         bgPane.add(container1);
         classifyUIResult.add(bgPane);
         frame.add(classifyUIResult);
+        classify.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            int _k;
+            if (val.compareTo("K-NN") == 0) {
+              _k = Integer.parseInt(k.getText());
+            } else {
+              _k = 0;
+            }
+            
+            showClassifyResult(String.valueOf(_buying.getSelectedItem()), String.valueOf(_maint.getSelectedItem()), String.valueOf(_doors.getSelectedItem()), String.valueOf(_persons.getSelectedItem()), String.valueOf(_lugboot.getSelectedItem()), String.valueOf(_safety.getSelectedItem()), String.valueOf(algorithm.getSelectedItem()), _k);
+            frame.setContentPane(classifyUIResult);
+            frame.invalidate();
+            frame.validate();
+            
+           }
+        });
     }
     
       

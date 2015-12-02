@@ -7,6 +7,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -23,7 +24,7 @@ import learning.agent.NaiveBayesLearning;
  *
  * @author William Sentosa
  */
-public class NaiveBayesModelPanel extends JPanel{
+public class NaiveBayesModelPanel extends TransparentJPanel{
   private BigDecimal[][] model;
   private List<String> classes;
   private List<String> types;
@@ -35,7 +36,7 @@ public class NaiveBayesModelPanel extends JPanel{
     int row = model.length;
     int col = model[1].length;
     this.setLayout(new GridLayout(row+1,col+1,1,1));
-    this.setBorder(BorderFactory.createLineBorder(Color.black));
+    this.setBorder(BorderFactory.createLineBorder(Color.white));
     this.setPreferredSize(new Dimension(col*70, row*30));
   }
   
@@ -48,17 +49,24 @@ public class NaiveBayesModelPanel extends JPanel{
     add(label1);
     for(int i=0; i<col; i++) {
       JLabel label = new JLabel(classes.get(i));
+      label.setForeground(Color.white);
+      label.setFont(new Font("Roboto", Font.PLAIN, 14));
       add(label);
     } 
     
     MathContext mc = new MathContext(3);
     
     for(int i=0; i<row; i++) {
-        add(new JLabel(types.get(i) + ""));
+        JLabel label3 = new JLabel(types.get(i) + "");
+        label3.setForeground(Color.white);
+        label3.setFont(new Font("Roboto", Font.PLAIN, 14));
+        add(label3);
         for(int j=0; j<col; j++) {
-            add(new JLabel(model[i][j].round(mc) + ""));
+            JLabel label2 = new JLabel(model[i][j].round(mc) + "");
+            label2.setForeground(Color.white);
+            label2.setFont(new Font("Roboto", Font.PLAIN, 14));
+            add(label2);
         }
-        System.out.println();
     }
     
   }
@@ -70,7 +78,7 @@ public class NaiveBayesModelPanel extends JPanel{
   public static void main(String args[]) {
      JFrame frame = new JFrame();
      JPanel mainPanel = new JPanel();
-     mainPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+     mainPanel.setBorder(BorderFactory.createLineBorder(Color.white));
      DataCollection dataCol = new DataCollection();
      dataCol.readFile("car.arff");
      dataCol.randomizeData();

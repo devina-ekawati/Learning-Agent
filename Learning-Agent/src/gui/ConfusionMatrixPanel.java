@@ -8,6 +8,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,14 +22,14 @@ import learning.agent.NaiveBayesLearning;
  *
  * @author William Sentosa
  */
-public class ConfusionMatrixPanel extends JPanel {
+public class ConfusionMatrixPanel extends TransparentJPanel {
   private ConfusionMatrix matrix;
   
   public ConfusionMatrixPanel(ConfusionMatrix mat) {
     matrix = mat;
     int size = mat.getSize();
     this.setLayout(new GridLayout(size+1,size+1,1,1));
-    this.setBorder(BorderFactory.createLineBorder(Color.black));
+    this.setBorder(BorderFactory.createLineBorder(Color.white));
     this.setPreferredSize(new Dimension(size*70, size*30));
   }
   
@@ -39,14 +40,21 @@ public class ConfusionMatrixPanel extends JPanel {
     add(label1);
     for(String kelas : matrix.getClasses()) {
       JLabel label = new JLabel(kelas);
-      
+      label.setForeground(Color.white);
+      label.setFont(new Font("Roboto", Font.PLAIN, 14));
       add(label);
     } 
     
     for(int i=0; i<size; i++) {
-        add(new JLabel(matrix.getClasses().get(i) + ""));
+        JLabel label3 = new JLabel(matrix.getClasses().get(i) + "");
+        label3.setForeground(Color.white);
+        label3.setFont(new Font("Roboto", Font.PLAIN, 14));
+        add(label3);
         for(int j=0; j<size; j++) {
-            add(new JLabel(matrix.getMatrix()[i][j] + ""));
+            JLabel label2 = new JLabel(matrix.getMatrix()[i][j] + "");
+            label2.setForeground(Color.white);
+            label2.setFont(new Font("Roboto", Font.PLAIN, 14));
+            add(label2);
         }
         System.out.println();
     }
