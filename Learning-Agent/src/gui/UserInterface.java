@@ -19,6 +19,9 @@ import java.util.logging.*;
 import javax.imageio.ImageIO;
 import learning.agent.ConfusionMatrix;
 import learning.agent.DataCollection;
+import learning.agent.Datum;
+import learning.agent.KNNLearningAgent;
+import learning.agent.KNearestNeighbour;
 import learning.agent.NaiveBayesLearning;
 
 /**
@@ -33,6 +36,7 @@ public class UserInterface {
     TransparentJPanel implementationUI;
     TransparentJPanel applicationUI;
     TransparentJPanel implementationUIResult;
+    TransparentJPanel classifyUIResult;
   
     public UserInterface() throws IOException {
         frame = new JFrame("goclass");
@@ -40,6 +44,7 @@ public class UserInterface {
         mainMenu = new TransparentJPanel();
         implementationUI = new TransparentJPanel();
         implementationUIResult = new TransparentJPanel();
+        classifyUIResult = new TransparentJPanel();
         applicationUI = new TransparentJPanel();
         
         start();
@@ -99,7 +104,7 @@ public class UserInterface {
                 if (source instanceof Component) {
                     JDialog setup = new JDialog(frame, true);
                     TransparentJPanel panel = new TransparentJPanel();
-                    panel.setLayout(new GridLayout(7,2,10,10));
+                    panel.setLayout(new GridLayout(9,2,10,10));
 
                     JLabel buyLabel = new JLabel("Buying");
                     panel.add(buyLabel);
@@ -136,15 +141,77 @@ public class UserInterface {
                     String[] safetyAtr = {"low", "med","high"};
                     final JComboBox<String> safety = new JComboBox<String>(safetyAtr);
                     panel.add(safety);
+                    
+                    JLabel algorithmLabel = new JLabel("Algorithm");
+                    algorithmLabel.setHorizontalAlignment(JLabel.CENTER);
+                    panel.add(algorithmLabel);
 
-                    panel.add(new Label());
+                    String[] algorithms = {"K-NN","Naive Bayes"};
+                    final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
+                    panel.add(algorithm);
+
+                    JLabel kLabel = new JLabel("k");
+                    kLabel.setHorizontalAlignment(JLabel.CENTER);
+                    panel.add(kLabel);
+
+                    JTextField k = new JTextField(2);
+                    panel.add(k);
+                    algorithm.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String val = String.valueOf(algorithm.getSelectedItem());
+                        if (val.compareTo("K-NN") == 0) {
+                            kLabel.setVisible(true);
+                            k.setVisible(true);
+                        } else {
+                            kLabel.setVisible(false);
+                            k.setVisible(false);
+                        }
+                       }
+                    });
+                    
+                    TransparentJPanel panel2 = new TransparentJPanel();
+                    panel2.setLayout(new GridBagLayout());
+                    GridBagConstraints c = new GridBagConstraints();
+                    c.gridx = 0;
+                    c.gridy = 0;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.anchor = GridBagConstraints.FIRST_LINE_START;
+                    c.insets = new Insets(0,0,0,0);
+                    panel2.add(panel);
+                    
                     JButton ok = new JButton("OK");
-                    ok.setSize(new Dimension(5,5));
-                    panel.add(ok);
-
-                    setup.add(panel);
+                    
+                    c.gridx = 0;
+                    c.gridy = 1;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.anchor = GridBagConstraints.LAST_LINE_END;
+                    c.insets = new Insets(0,0,0,0);
+                    panel2.add(ok,c);
+                    
+                    ok.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            Object source = e.getSource();
+                            if (source instanceof Component) {
+                                 setup.dispose();
+                                 int _k;
+                                 if (String.valueOf(algorithm.getSelectedItem()).compareTo("K-NN") == 0) {
+                                   _k = Integer.parseInt(k.getText());
+                                 } else {
+                                   _k = 0;
+                                 }
+                                showClassifyResult(String.valueOf(buying.getSelectedItem()), String.valueOf(maint.getSelectedItem()), String.valueOf(doors.getSelectedItem()), String.valueOf(persons.getSelectedItem()), String.valueOf(lugboot.getSelectedItem()), String.valueOf(safety.getSelectedItem()), String.valueOf(algorithm.getSelectedItem()), _k);
+                                frame.setContentPane(classifyUIResult);
+                                frame.invalidate();
+                                frame.validate();
+                            }
+                        }
+                    });
+                    
+                    setup.add(panel2);
                     setup.setFocusable(true);
-                    setup.setSize(300, 300);
+                    setup.setSize(300, 400);
                     setup.setVisible(true);
                 }
             }
@@ -366,29 +433,19 @@ public class UserInterface {
                                 if (String.valueOf(algorithm.getSelectedItem()).compareTo("K-NN") == 0) {
                                   if (k.getText().length() > 0) {
                                     setup.dispose();
-                                    implementationUI.repaint();
                                     showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()), String.valueOf(method.getSelectedItem()));
-                                    //implementationUIResult.revalidate();
                                     frame.setContentPane(implementationUIResult);
-                                    //frame.invalidate();
+                                    frame.invalidate();
                                     frame.validate();
-                                    //frame.repaint();
-                                    
-                                    
                                   } else {
                                     JOptionPane.showMessageDialog(frame, "Please enter k value", "Setup error", JOptionPane.ERROR_MESSAGE);
                                   }
                                 } else {
                                   setup.dispose();
                                   showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()),0,String.valueOf(method.getSelectedItem()));
-                                  frame.validate();
-                                  implementationUI.repaint();
                                   frame.setContentPane(implementationUIResult);
-//                                  implementationUIResult.revalidate();
-//                                  implementationUIResult.repaint();
-//                                  frame.invalidate();
-//                                  frame.validate();
-                                  
+                                  frame.invalidate();
+                                  frame.validate();
                                 }
                                 
                             }
@@ -398,8 +455,6 @@ public class UserInterface {
                     setup.setFocusable(true);
                     setup.setSize(250, 250);
                     setup.setVisible(true);
-                    
-                    
                 }
             }
         });
@@ -418,7 +473,7 @@ public class UserInterface {
     }
 
     public void showImplementationResult(String _path, String _algorithm, int _k, String _testOptions) {
-        implementationUI = new TransparentJPanel();
+        implementationUIResult = new TransparentJPanel();
         implementationUIResult.setLayout(new BorderLayout());
         // Menambah background
         BackgroundPane bgPane;
@@ -437,8 +492,6 @@ public class UserInterface {
         GridBagConstraints c = new GridBagConstraints();
         TransparentJPanel container2 = new TransparentJPanel();
         container2.setLayout(new GridBagLayout());
-        
-        
 
         // Label untuk logo
         BufferedImage logoImage = null;
@@ -456,162 +509,155 @@ public class UserInterface {
         c.insets = new Insets(0,0,0,0);
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container2.add(logoLabel, c);
-//        // Textbox untuk file
-//        JTextField file = new JTextField(50);
-//        c.gridx = 1;
-//        c.gridy = 0;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 3;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        //c.insets = new Insets(0,0,0,0);
-//        container2.add(file, c);
-//        // Button browse
-//        JButton browse = new JButton("Browse");
-//        browse.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JFileChooser fileChooser = new JFileChooser();
-//                WindowsFileChooserUI wui = new WindowsFileChooserUI(fileChooser);
-//                wui.installUI(fileChooser);
-//                int returnValue = fileChooser.showOpenDialog(null);
-//                if (returnValue == JFileChooser.APPROVE_OPTION) {
-//                    File selectedFile = fileChooser.getSelectedFile();
-//                }
-//            }
-//        });
-//        c.gridx = 4;
-//        c.gridy = 0;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        container2.add(browse, c);
-//        JLabel algorithmLabel = new JLabel("Algorithm");
-//        setLabelLayout(algorithmLabel);
-//        c.gridx = 0;
-//        c.gridy = 1;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(algorithmLabel, c);
-//        
-//        // Dropdown untuk algoritma
-//        String[] algorithms = {"K-NN","Naive Bayes"};
-//        final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
-//        c.gridx = 1;
-//        c.gridy = 1;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(algorithm, c);
-//        
-//        JLabel kLabel = new JLabel("Number of K");
-//        setLabelLayout(kLabel);
-//        JTextField k = new JTextField(2);
-//        c.gridx = 0;
-//        c.gridy = 2;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(kLabel,c);
-//        c.gridx = 1;
-//        c.gridy = 2;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(k,c);
-//        algorithm.addActionListener(new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//            String val = String.valueOf(algorithm.getSelectedItem());
-//            if (val.compareTo("K-NN") == 0) {
-//                kLabel.setVisible(true);
-//                k.setVisible(true);
-//            } else {
-//                kLabel.setVisible(false);
-//                k.setVisible(false);
-//            }
-//           }
-//        });
-//        
-//        JLabel testLabel = new JLabel("Test option");
-//        setLabelLayout(testLabel);
-//        c.gridx = 2;
-//        c.gridy = 1;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(testLabel, c);
-//        
-//        // Dropdown untuk method
-//        String[] methods = {"Full Training","10 Folds"};
-//        final JComboBox<String> method = new JComboBox<String>(methods);
-//        c.gridx = 3;
-//        c.gridy = 1;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(method, c);
-//        
-//        JButton classify = new JButton("classify");
-//        c.gridx = 4;
-//        c.gridy = 1;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.gridwidth = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        container2.add(classify, c);
-//        
-//        c.gridx = 0;
-//        c.gridy = 0;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        c.insets = new Insets(0,0,0,0);
-//        c.fill = GridBagConstraints.BOTH;
+        // Textbox untuk file
+        JTextField file = new JTextField(50);
+        c.gridx = 1;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 3;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        //c.insets = new Insets(0,0,0,0);
+        container2.add(file, c);
+        // Button browse
+        JButton browse = new JButton("Browse");
+        browse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                WindowsFileChooserUI wui = new WindowsFileChooserUI(fileChooser);
+                wui.installUI(fileChooser);
+                int returnValue = fileChooser.showOpenDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                }
+            }
+        });
+        c.gridx = 4;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        container2.add(browse, c);
+        JLabel algorithmLabel = new JLabel("Algorithm");
+        setLabelLayout(algorithmLabel);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(algorithmLabel, c);
+        
+        // Dropdown untuk algoritma
+        String[] algorithms = {"K-NN","Naive Bayes"};
+        final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(algorithm, c);
+        
+        JLabel kLabel = new JLabel("Number of K");
+        setLabelLayout(kLabel);
+        JTextField k = new JTextField(2);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(kLabel,c);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(k,c);
+        algorithm.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            if (val.compareTo("K-NN") == 0) {
+                kLabel.setVisible(true);
+                k.setVisible(true);
+            } else {
+                kLabel.setVisible(false);
+                k.setVisible(false);
+            }
+           }
+        });
+        
+        JLabel testLabel = new JLabel("Test option");
+        setLabelLayout(testLabel);
+        c.gridx = 2;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(testLabel, c);
+        
+        // Dropdown untuk method
+        String[] methods = {"Full Training","10 Folds"};
+        final JComboBox<String> method = new JComboBox<String>(methods);
+        c.gridx = 3;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(method, c);
+        
+        JButton classify = new JButton("classify");
+        c.gridx = 4;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(classify, c);
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        c.fill = GridBagConstraints.BOTH;
         container1.add(container2, c);
-//        // Tombol back
-//        JButton back = new JButton("Back");
-//        c.gridx = 0;
-//        c.gridy = 2;
-//        c.weightx = 1;
-//        c.weighty = 1;
-//        c.insets = new Insets(0,0,70,0);
-//        c.fill = GridBagConstraints.NONE;
-//        c.anchor = GridBagConstraints.FIRST_LINE_START;
-//        container1.add(back, c);
-//        back.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                Object source = e.getSource();
-//                if (source instanceof Component) {
-//                    implementation();
-//                    frame.setContentPane(mainMenu);
-//                    frame.invalidate();
-//                    frame.validate();
-//                }
-//            }
-//        });
-        
-        implementationUIResult.setVisible(false);
-        implementationUIResult.setVisible(true);
-        implementationUIResult.invalidate();
-        implementationUIResult.validate();
-        implementationUIResult.repaint();
-        
+        // Tombol back
+        JButton back = new JButton("Back");
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.insets = new Insets(0,0,70,0);
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        container1.add(back, c);
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source instanceof Component) {
+                    implementation();
+                    frame.setContentPane(mainMenu);
+                    frame.invalidate();
+                    frame.validate();
+                }
+            }
+        });
         if (_algorithm.compareTo("Naive Bayes") == 0) {
           // Membuat tabbedpane untuk menampilkan hasil
           JTabbedPane tabbedPane = new JTabbedPane();
@@ -676,9 +722,10 @@ public class UserInterface {
           JLabel label3 = new JLabel("Incorrectly classified class : " + accuracy.get(1).multiply(new BigDecimal(100), mc) + "%");
           panel2.add(label3);
           label3.setBounds(400, 90, 200, 10);
+          
           tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
           c.gridx = 0;
-          c.gridy = 0;
+          c.gridy = 1;
           c.weightx = 1;
           c.weighty = 1;
           c.ipady = 220;
@@ -687,7 +734,58 @@ public class UserInterface {
           container1.add(tabbedPane, c);
           tabbedPane.add(panel2, "Confusion Matrix");
         } else if (_algorithm.compareTo("K-NN") == 0) {
+          DataCollection data = new DataCollection();
+          data.readFile(_path);
           
+          // Panel hasil
+          TransparentJPanel resultPanel = new TransparentJPanel();
+          
+          // Perhitungan
+          float correctAccuracy = 0;
+          KNNLearningAgent knnAgent = new KNNLearningAgent(_k, data);
+          knnAgent.fullTrainingKNN();
+          if(_testOptions.compareTo("Full Training") == 0) {
+            correctAccuracy = (float) (Math.round(knnAgent.countFullTrainingAccuracy()*100.0)/100.0);
+          } else if(_testOptions.compareTo("10 Folds") == 0) {
+            correctAccuracy = (float) (Math.round(knnAgent.countTenFoldAccuracyMean()*100.0)/100.0);
+          }
+          
+          // Matriks Confusion
+          ConfusionMatrix matrix = knnAgent.getConfusionMatrix();
+          ConfusionMatrixPanel panel = new ConfusionMatrixPanel(matrix);
+          panel.initComponent();
+          resultPanel.setLayout(null);
+          resultPanel.add(panel);
+          panel.setBounds(new Rectangle(new Point(30,70), panel.getPreferredSize()));
+          JLabel label1 = new JLabel("Confusion Matrix");
+          resultPanel.add(label1);
+          label1.setBounds(new Rectangle(new Point(30,50), label1.getPreferredSize()));
+          JLabel accuracyLabel = new JLabel("Evaluation of training set");
+          resultPanel.add(accuracyLabel);
+          accuracyLabel.setBounds(new Rectangle(new Point(400,50), accuracyLabel.getPreferredSize()));
+                   
+          // KNN Ten-Fold Cross Validation
+          JLabel correctPercentage = new JLabel("Correctly classified class    : " + correctAccuracy + "%");
+          correctPercentage.setFont(new Font("Roboto", Font.PLAIN, 14));
+          correctPercentage.setForeground(Color.white);
+          correctPercentage.setBounds(400, 70, 200, 10);
+          
+          JLabel incorrectPercentage= new JLabel("Incorrectly classified class : " + (100-correctAccuracy) + "%");
+          incorrectPercentage.setFont(new Font("Roboto", Font.PLAIN, 14));
+          incorrectPercentage.setForeground(Color.white);
+          incorrectPercentage.setBounds(400, 90, 200, 10);
+          
+          resultPanel.add(correctPercentage);
+          resultPanel.add(incorrectPercentage);
+       
+          c.gridx = 0;
+          c.gridy = 0;
+          c.weightx = 1;
+          c.weighty = 1;
+          c.ipady = 220;
+          c.anchor = GridBagConstraints.LINE_START;
+          c.fill = GridBagConstraints.HORIZONTAL;
+          container1.add(resultPanel, c);
         }
         
         bgPane.add(container1);
@@ -696,11 +794,271 @@ public class UserInterface {
 
     }
 
-    public void classify() {
-        // Label untuk Icon
-        JLabel icon = new JLabel("ICON");
-        applicationUI.add(icon);
-        frame.add(applicationUI);
+    public void showClassifyResult(String buying, String maint, String doors, String persons, String lugboot, String safety, String _algorithm, int _k) {
+        classifyUIResult = new TransparentJPanel();
+        classifyUIResult.setLayout(new BorderLayout());
+        // Menambah background
+        BackgroundPane bgPane;
+        bgPane = new BackgroundPane();
+        try {
+            BufferedImage bg = ImageIO.read(new File("assets/bg.jpg"));
+            bgPane.setBackgroundImage(bg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        };
+        
+        // Container
+        TransparentJPanel container1 = new TransparentJPanel();
+        container1.setLayout(new GridBagLayout());
+        container1.setPreferredSize(new Dimension(700, 650));
+        GridBagConstraints c = new GridBagConstraints();
+        TransparentJPanel container2 = new TransparentJPanel();
+        container2.setLayout(new GridBagLayout());
+
+        // Label untuk logo
+        BufferedImage logoImage = null;
+        try {
+            logoImage = ImageIO.read(new File("assets/header-logo.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.insets = new Insets(0,0,0,0);
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        container2.add(logoLabel, c);
+        // Textbox untuk file
+        JTextField file = new JTextField(50);
+        c.gridx = 1;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 3;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        //c.insets = new Insets(0,0,0,0);
+        container2.add(file, c);
+        // Button browse
+        JButton browse = new JButton("Browse");
+        browse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                WindowsFileChooserUI wui = new WindowsFileChooserUI(fileChooser);
+                wui.installUI(fileChooser);
+                int returnValue = fileChooser.showOpenDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                }
+            }
+        });
+        c.gridx = 4;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        container2.add(browse, c);
+        JLabel algorithmLabel = new JLabel("Algorithm");
+        setLabelLayout(algorithmLabel);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(algorithmLabel, c);
+        
+        // Dropdown untuk algoritma
+        String[] algorithms = {"K-NN","Naive Bayes"};
+        final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(algorithm, c);
+        
+        JLabel kLabel = new JLabel("Number of K");
+        setLabelLayout(kLabel);
+        JTextField k = new JTextField(2);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(kLabel,c);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(k,c);
+        algorithm.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            if (val.compareTo("K-NN") == 0) {
+                kLabel.setVisible(true);
+                k.setVisible(true);
+            } else {
+                kLabel.setVisible(false);
+                k.setVisible(false);
+            }
+           }
+        });
+        
+        JLabel testLabel = new JLabel("Test option");
+        setLabelLayout(testLabel);
+        c.gridx = 2;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(testLabel, c);
+        
+        // Dropdown untuk method
+        String[] methods = {"Full Training","10 Folds"};
+        final JComboBox<String> method = new JComboBox<String>(methods);
+        c.gridx = 3;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(method, c);
+        
+        JButton classify = new JButton("classify");
+        c.gridx = 4;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(classify, c);
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        c.fill = GridBagConstraints.BOTH;
+        container1.add(container2, c);
+        // Tombol back
+        JButton back = new JButton("Back");
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.insets = new Insets(0,0,70,0);
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.LAST_LINE_START;
+        container1.add(back, c);
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source instanceof Component) {
+                    implementation();
+                    frame.setContentPane(mainMenu);
+                    frame.invalidate();
+                    frame.validate();
+                }
+            }
+        });
+        
+        JPanel result = new JPanel();
+        DataCollection dataCol = new DataCollection();
+        dataCol.readFile("car.arff");
+        dataCol.randomizeData();
+        if (_algorithm.compareTo("Naive Bayes") == 0) {
+          NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
+          agent.fillWithAtrFrequency();
+          agent.countProbability();
+          JPanel panel1 = new JPanel();
+          panel1.setLayout(new GridLayout(2, dataCol.getAttributeName().size()-1));
+          for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
+            panel1.add(new JLabel(dataCol.getAttributeName().get(i)));
+          }
+          for (int i = 0; i < dataCol.getAttributeName().size()-1; i++) {
+            BigDecimal[][] model = agent.getModel().get(i);
+            ArrayList<String> classes = dataCol.getAttributeType().get(dataCol.getAttributeName().size()-1);
+            ArrayList<String> types = dataCol.getAttributeType().get(i);
+            NaiveBayesModelPanel panel = new NaiveBayesModelPanel(model, classes, types);
+            panel.initComponent();
+            panel1.add(panel);
+          }
+          
+          ArrayList<String> atr = new ArrayList<String>();
+          atr.add(buying);
+          atr.add(maint);
+          atr.add(doors);
+          atr.add(persons);
+          atr.add(lugboot);
+          atr.add(safety);
+          Datum d = new Datum(atr);
+          JLabel _class = new JLabel(agent.classify(d));
+          c.gridx = 0;
+          c.gridy = 1;
+          c.weightx = 1;
+          c.weighty = 1;
+          c.ipady = 220;
+          c.anchor = GridBagConstraints.LINE_START;
+          c.fill = GridBagConstraints.HORIZONTAL;
+          container1.add(_class, c);
+          
+          JScrollPane scrollPane = new JScrollPane(panel1);
+          scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+          scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+          scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+          c.gridx = 0;
+          c.gridy = 2;
+          c.weightx = 1;
+          c.weighty = 1;
+          c.ipady = 220;
+          c.anchor = GridBagConstraints.LINE_START;
+          c.fill = GridBagConstraints.HORIZONTAL;
+          container1.add(scrollPane,c);
+          
+          
+        } else if (_algorithm.compareTo("K-NN") == 0) {
+          ArrayList<String> atr = new ArrayList<String>();
+          atr.add(buying);
+          atr.add(maint);
+          atr.add(doors);
+          atr.add(persons);
+          atr.add(lugboot);
+          atr.add(safety);
+          Datum d = new Datum(atr);
+          KNearestNeighbour knn = new KNearestNeighbour(_k, dataCol, d);
+          
+          c.gridx = 0;
+          c.gridy = 1;
+          c.weightx = 1;
+          c.weighty = 1;
+          c.ipady = 220;
+          c.anchor = GridBagConstraints.LINE_START;
+          c.fill = GridBagConstraints.HORIZONTAL;
+          container1.add(new JLabel(knn.doAlgorithm()), c);
+        }
+        
+        bgPane.add(container1);
+        classifyUIResult.add(bgPane);
+        frame.add(classifyUIResult);
     }
     
     /* Returns an ImageIcon, or null if the path was invalid. */
