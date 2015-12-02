@@ -48,6 +48,7 @@ public class UserInterface {
         applicationUI = new TransparentJPanel();
         
         start();
+//        showClassifyResult("vhigh", "vhigh", "2.0", "2.0", "small", "low", "K-NN", 2);
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         } catch (ClassNotFoundException ex) { 
@@ -184,10 +185,10 @@ public class UserInterface {
                     
                     c.gridx = 0;
                     c.gridy = 1;
-                    c.weightx = 1;
-                    c.weighty = 1;
+                    //c.weightx = 1;
+                    c.weighty = 0;
                     c.anchor = GridBagConstraints.LAST_LINE_END;
-                    c.insets = new Insets(0,0,0,0);
+                    c.insets = new Insets(0,0,0,25);
                     panel2.add(ok,c);
                     
                     ok.addActionListener(new ActionListener() {
@@ -504,7 +505,7 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
-        c.weighty = 1;
+        c.weighty = 0;
         c.gridwidth = 1;
         c.insets = new Insets(0,0,0,0);
         c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -514,7 +515,7 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 0;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 3;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         //c.insets = new Insets(0,0,0,0);
@@ -536,7 +537,7 @@ public class UserInterface {
         c.gridx = 4;
         c.gridy = 0;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container2.add(browse, c);
@@ -545,7 +546,7 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 1;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -557,7 +558,7 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 1;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -569,7 +570,7 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -577,7 +578,7 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 2;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -600,7 +601,7 @@ public class UserInterface {
         c.gridx = 2;
         c.gridy = 1;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -612,7 +613,7 @@ public class UserInterface {
         c.gridx = 3;
         c.gridy = 1;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -622,8 +623,8 @@ public class UserInterface {
         c.gridx = 4;
         c.gridy = 1;
         c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
+        //c.weighty = 1;
+        //c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
         container2.add(classify, c);
@@ -631,7 +632,7 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
         c.fill = GridBagConstraints.BOTH;
@@ -641,7 +642,7 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
-        c.weighty = 1;
+        //c.weighty = 1;
         c.insets = new Insets(0,0,70,0);
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -663,7 +664,7 @@ public class UserInterface {
           JTabbedPane tabbedPane = new JTabbedPane();
           JPanel panel1 = new JPanel();
           DataCollection dataCol = new DataCollection();
-          dataCol.readFile("car.arff");
+          dataCol.readFile(_path);
           dataCol.randomizeData();
           NaiveBayesLearning agent = new NaiveBayesLearning(dataCol);
           agent.fillWithAtrFrequency();
@@ -697,7 +698,6 @@ public class UserInterface {
             matrix = agent.getTenFoldConfusionMatrix();
           }
           agent.getAccuracyFullTraining();
-          
           
           JPanel panel2 = new JPanel();
           
@@ -768,18 +768,18 @@ public class UserInterface {
           JLabel correctPercentage = new JLabel("Correctly classified class    : " + correctAccuracy + "%");
           correctPercentage.setFont(new Font("Roboto", Font.PLAIN, 14));
           correctPercentage.setForeground(Color.white);
-          correctPercentage.setBounds(400, 70, 200, 10);
+          correctPercentage.setBounds(400, 70, 300, 20);
           
           JLabel incorrectPercentage= new JLabel("Incorrectly classified class : " + (100-correctAccuracy) + "%");
           incorrectPercentage.setFont(new Font("Roboto", Font.PLAIN, 14));
           incorrectPercentage.setForeground(Color.white);
-          incorrectPercentage.setBounds(400, 90, 200, 10);
+          incorrectPercentage.setBounds(400, 90, 300, 20);
           
           resultPanel.add(correctPercentage);
           resultPanel.add(incorrectPercentage);
        
           c.gridx = 0;
-          c.gridy = 0;
+          c.gridy = 1;
           c.weightx = 1;
           c.weighty = 1;
           c.ipady = 220;
@@ -809,11 +809,11 @@ public class UserInterface {
         
         // Container
         TransparentJPanel container1 = new TransparentJPanel();
-        container1.setLayout(new GridBagLayout());
+        container1.setLayout(new BoxLayout(container1, BoxLayout.Y_AXIS));
         container1.setPreferredSize(new Dimension(700, 650));
         GridBagConstraints c = new GridBagConstraints();
         TransparentJPanel container2 = new TransparentJPanel();
-        container2.setLayout(new GridBagLayout());
+        container2.setLayout(new FlowLayout());
 
         // Label untuk logo
         BufferedImage logoImage = null;
@@ -822,88 +822,82 @@ public class UserInterface {
         } catch (IOException ex) {
             Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(0,0,0,0);
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        container2.add(logoLabel, c);
-        // Textbox untuk file
-        JTextField file = new JTextField(50);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 3;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        //c.insets = new Insets(0,0,0,0);
-        container2.add(file, c);
-        // Button browse
-        JButton browse = new JButton("Browse");
-        browse.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                WindowsFileChooserUI wui = new WindowsFileChooserUI(fileChooser);
-                wui.installUI(fileChooser);
-                int returnValue = fileChooser.showOpenDialog(null);
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                }
-            }
-        });
-        c.gridx = 4;
-        c.gridy = 0;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        container2.add(browse, c);
+        c.weightx = 10;
+        JLabel logoLabel = new JLabel(new ImageIcon(logoImage));
+        container2.add(logoLabel);
+        
+        // Header pilihan atribut
+        TransparentJPanel panel = new TransparentJPanel();
+        panel.setLayout(new GridLayout(2,8,0,10));
+
+        JLabel buyLabel = new JLabel("Buying");
+        setLabelLayout(buyLabel);
+        panel.add(buyLabel);
+        String[] buyingAtr = {"vhigh","high","med","low"};
+        final JComboBox<String> _buying = new JComboBox<String>(buyingAtr);
+        panel.add(_buying);
+        panel.add(new JLabel(""));
+
+        JLabel maintLabel = new JLabel("Maint");
+        setLabelLayout(maintLabel);
+        panel.add(maintLabel);
+        String[] maintAtr = {"vhigh","high","med","low"};
+        final JComboBox<String> _maint = new JComboBox<String>(maintAtr);
+        panel.add(_maint);
+        panel.add(new JLabel(""));
+
+        JLabel doorsLabel = new JLabel("Doors");
+        setLabelLayout(doorsLabel);
+        panel.add(doorsLabel);
+        String[] doorsAtr = {"2.0","3.0","4.0","5more"};
+        final JComboBox<String> _doors = new JComboBox<String>(doorsAtr);
+        panel.add(_doors);
+        panel.add(new JLabel(""));
+
+        JLabel personsLabel = new JLabel("Persons");
+        setLabelLayout(personsLabel);
+        panel.add(personsLabel);
+        String[] personsAtr = {"2.0","4.0","more"};
+        final JComboBox<String> _persons = new JComboBox<String>(personsAtr);
+        panel.add(_persons);
+        panel.add(new JLabel(""));
+
+        JLabel logbootLabel = new JLabel("Lug_boot");
+        setLabelLayout(logbootLabel);
+        panel.add(logbootLabel);
+        String[] lugbootAtr = {"small","med","big"};
+        final JComboBox<String> _lugboot = new JComboBox<String>(lugbootAtr);
+        panel.add(_lugboot);
+        panel.add(new JLabel(""));
+
+        JLabel safetyLabel = new JLabel("Safety");
+        setLabelLayout(safetyLabel);
+        panel.add(safetyLabel);
+        String[] safetyAtr = {"low", "med","high"};
+        final JComboBox<String> _safety = new JComboBox<String>(safetyAtr);
+        panel.add(_safety);
+        container2.add(panel);
+        
+        // Header pilihan algoritma
+        TransparentJPanel algorithmHeader = new TransparentJPanel();
+        algorithmHeader.setLayout(new GridLayout(1,7));
         JLabel algorithmLabel = new JLabel("Algorithm");
         setLabelLayout(algorithmLabel);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(algorithmLabel, c);
+        algorithmHeader.add(algorithmLabel);
         
         // Dropdown untuk algoritma
         String[] algorithms = {"K-NN","Naive Bayes"};
         final JComboBox<String> algorithm = new JComboBox<String>(algorithms);
-        c.gridx = 1;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(algorithm, c);
+        algorithmHeader.add(algorithm);
+        algorithmHeader.add(new JLabel());
         
         JLabel kLabel = new JLabel("Number of K");
         setLabelLayout(kLabel);
         JTextField k = new JTextField(2);
-        c.gridx = 0;
-        c.gridy = 2;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(kLabel,c);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(k,c);
+        algorithmHeader.add(kLabel);
+        algorithmHeader.add(k);
         algorithm.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             String val = String.valueOf(algorithm.getSelectedItem());
@@ -916,72 +910,25 @@ public class UserInterface {
             }
            }
         });
+        algorithmHeader.add(new JLabel());
         
-        JLabel testLabel = new JLabel("Test option");
-        setLabelLayout(testLabel);
-        c.gridx = 2;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(testLabel, c);
-        
-        // Dropdown untuk method
-        String[] methods = {"Full Training","10 Folds"};
-        final JComboBox<String> method = new JComboBox<String>(methods);
-        c.gridx = 3;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(method, c);
-        
-        JButton classify = new JButton("classify");
-        c.gridx = 4;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        container2.add(classify, c);
-        
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(0,0,0,0);
-        c.fill = GridBagConstraints.BOTH;
-        container1.add(container2, c);
-        // Tombol back
-        JButton back = new JButton("Back");
-        c.gridx = 0;
-        c.gridy = 2;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.insets = new Insets(0,0,70,0);
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.LAST_LINE_START;
-        container1.add(back, c);
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
-                if (source instanceof Component) {
-                    implementation();
-                    frame.setContentPane(mainMenu);
-                    frame.invalidate();
-                    frame.validate();
-                }
-            }
+        // Tombol Classify
+        JButton classify = new JButton("Classify");
+        classify.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            String val = String.valueOf(algorithm.getSelectedItem());
+            showClassifyResult(String.valueOf(_buying.getSelectedItem()), String.valueOf(_maint.getSelectedItem()), String.valueOf(_doors.getSelectedItem()), String.valueOf(_persons.getSelectedItem()), String.valueOf(_lugboot.getSelectedItem()), String.valueOf(_safety.getSelectedItem()), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()));
+            frame.setContentPane(implementationUIResult);
+            frame.invalidate();
+            frame.validate();
+           }
         });
+        algorithmHeader.add(classify);
+        container2.add(algorithmHeader);
+        container1.add(container2);
         
-        JPanel result = new JPanel();
+        // Hasil algoritma
+        TransparentJPanel result = new TransparentJPanel();
         DataCollection dataCol = new DataCollection();
         dataCol.readFile("car.arff");
         dataCol.randomizeData();
@@ -1013,28 +960,23 @@ public class UserInterface {
           Datum d = new Datum(atr);
           JLabel _class = new JLabel(agent.classify(d));
           c.gridx = 0;
-          c.gridy = 1;
+          c.gridy = 0;
           c.weightx = 1;
-          c.weighty = 1;
           c.ipady = 220;
           c.anchor = GridBagConstraints.LINE_START;
           c.fill = GridBagConstraints.HORIZONTAL;
-          container1.add(_class, c);
+          container1.add(_class);
           
           JScrollPane scrollPane = new JScrollPane(panel1);
           scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
           c.gridx = 0;
-          c.gridy = 2;
-          c.weightx = 1;
-          c.weighty = 1;
+          c.gridy = 1;
           c.ipady = 220;
           c.anchor = GridBagConstraints.LINE_START;
           c.fill = GridBagConstraints.HORIZONTAL;
-          container1.add(scrollPane,c);
-          
-          
+          container1.add(scrollPane, c);
         } else if (_algorithm.compareTo("K-NN") == 0) {
           ArrayList<String> atr = new ArrayList<String>();
           atr.add(buying);
@@ -1046,14 +988,11 @@ public class UserInterface {
           Datum d = new Datum(atr);
           KNearestNeighbour knn = new KNearestNeighbour(_k, dataCol, d);
           
-          c.gridx = 0;
-          c.gridy = 1;
-          c.weightx = 1;
-          c.weighty = 1;
-          c.ipady = 220;
-          c.anchor = GridBagConstraints.LINE_START;
-          c.fill = GridBagConstraints.HORIZONTAL;
-          container1.add(new JLabel(knn.doAlgorithm()), c);
+          JLabel classResult = new JLabel("Class result: " + knn.doAlgorithm());
+          classResult.setFont(new Font("Roboto", Font.BOLD, 20));
+          classResult.setForeground(Color.white);
+          result.add(classResult);
+          container1.add(result);
         }
         
         bgPane.add(container1);
@@ -1061,6 +1000,7 @@ public class UserInterface {
         frame.add(classifyUIResult);
     }
     
+      
     /* Returns an ImageIcon, or null if the path was invalid. */
     protected ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = getClass().getResource(path);
