@@ -46,7 +46,13 @@ public class KNNLearningAgent {
     return nPredictionTrue.get(i);
   }
   
-  public int[][] getConfusionMatrix() {
+  public ConfusionMatrix getConfusionMatrix() {
+    ConfusionMatrix confMat = new ConfusionMatrix(dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1));
+    confMat.setMatrix(confusionMatrix);
+    return confMat;
+  }
+  
+  public int[][] getMatrix() {
     return confusionMatrix;
   }
   
