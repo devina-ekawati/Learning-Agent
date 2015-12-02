@@ -128,11 +128,12 @@ public class KNNLearningAgent {
     int i = 0;
     for (int foldOrder=0; foldOrder<K_FOLD; foldOrder++) {
       int nTrue = 0;
+      int startIdx = i;
       // Perhitungan setiap fold
       for (int idxFold=0; idxFold<foldNum[foldOrder]; idxFold++) {
         Datum datum = dataCollection.getData().get(i);
         KNearestNeighbour knn = new KNearestNeighbour(k, dataCollection, datum);
-        String result = knn.doTopBottomAlgorithm(i, i, i+foldNum[foldOrder]-1);
+        String result = knn.doTopBottomAlgorithm(i, startIdx, startIdx+foldNum[foldOrder]-1);
         String classAttribute = dataCollection.getData().get(i).getClassAttribute();
         int index = dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1).indexOf(classAttribute);;
         if (result.equals(classAttribute)) {
@@ -140,19 +141,19 @@ public class KNNLearningAgent {
           nTrue++;
           (confusionMatrix[index][index])++;
         } else {
-          result = knn.doBottomTopAlgorithm(i, i, i+foldNum[foldOrder]-1);
+          result = knn.doBottomTopAlgorithm(i, startIdx, startIdx+foldNum[foldOrder]-1);
           if (result.equals(classAttribute)) {
             // Prediksi benar
             nTrue++;
             (confusionMatrix[index][index])++;
           } else {
-            result = knn.doTopAlgorithm(i, i, i+foldNum[foldOrder]-1);
+            result = knn.doTopAlgorithm(i, startIdx, startIdx+foldNum[foldOrder]-1);
             if (result.equals(classAttribute)) {
               // Prediksi benar
               nTrue++;
               (confusionMatrix[index][index])++;
             } else {
-              result = knn.doBottomAlgorithm(i, i, i+foldNum[foldOrder]-1);
+              result = knn.doBottomAlgorithm(i, startIdx, startIdx+foldNum[foldOrder]-1);
               if (result.equals(classAttribute)) {
                 // Prediksi benar
                 nTrue++;
