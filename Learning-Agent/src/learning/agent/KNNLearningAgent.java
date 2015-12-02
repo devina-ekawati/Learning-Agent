@@ -6,6 +6,7 @@
 package learning.agent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -17,6 +18,7 @@ public class KNNLearningAgent {
   private int k;
   private ArrayList<Integer> nPredictionTrue; // Jumlah prediksi kelas yang benar setiap folding
   private int[] foldNum;
+  private int[][] confusionMatrix;
   private static int K_FOLD;
   private static int FOLD_NUM;
   
@@ -28,12 +30,24 @@ public class KNNLearningAgent {
     K_FOLD = 10;
     FOLD_NUM = dataCollection.getTotalData() / 10;
     foldNum = new int[10];
+    
+    confusionMatrix = new int[dataCollection.getTotalAttributeType(dataCollection.getTotalAttribute()-1)][dataCollection.getTotalAttributeType(dataCollection.getTotalAttribute()-1)];
+    for (int i = 0; i < confusionMatrix.length; i++) {
+      for (int j = 0; j < confusionMatrix[i].length; j++) {
+        confusionMatrix[i][j] = 0;
+      }
+    }
+    
     divideByTen();
   }
   
   // Getter
   public int getNPredictionTrue(int i) {
     return nPredictionTrue.get(i);
+  }
+  
+  public int[][] getConfusionMatrix() {
+    return confusionMatrix;
   }
   
   // Method
@@ -67,11 +81,38 @@ public class KNNLearningAgent {
     for (int i=0; i<dataCollection.getData().size(); i++) {
       Datum datum = dataCollection.getData().get(i);
       KNearestNeighbour knn = new KNearestNeighbour(k, dataCollection, datum);
-      String result = knn.doAlgorithm();
+      String result = knn.doTopBottomAlgorithm(i);
       String classAttribute = dataCollection.getData().get(i).getClassAttribute();
+      int index = dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1).indexOf(classAttribute);
       if (result.equals(classAttribute)) {
         // Prediksi benar
         nTrue++;
+        (confusionMatrix[index][index])++;
+      } else {
+        result = knn.doBottomTopAlgorithm(i);
+        if (result.equals(classAttribute)) {
+          // Prediksi benar
+          nTrue++;
+          (confusionMatrix[index][index])++;
+        } else {
+          result = knn.doTopAlgorithm(i);
+          if (result.equals(classAttribute)) {
+            // Prediksi benar
+            nTrue++;
+            (confusionMatrix[index][index])++;
+          } else {
+            result = knn.doBottomAlgorithm(i);
+            if (result.equals(classAttribute)) {
+              // Prediksi benar
+              nTrue++;
+              (confusionMatrix[index][index])++;
+            } else {
+              int index2;
+              index2 = dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1).indexOf(result);
+              (confusionMatrix[index][index2])++;
+            }
+          }
+        }
       }
     }
     nPredictionTrue.add(nTrue);
@@ -85,11 +126,38 @@ public class KNNLearningAgent {
       for (int idxFold=0; idxFold<foldNum[foldOrder]; idxFold++) {
         Datum datum = dataCollection.getData().get(i);
         KNearestNeighbour knn = new KNearestNeighbour(k, dataCollection, datum);
-        String result = knn.doAlgorithm(i, i+foldNum[foldOrder]-1);
+        String result = knn.doTopBottomAlgorithm(i, i, i+foldNum[foldOrder]-1);
         String classAttribute = dataCollection.getData().get(i).getClassAttribute();
+        int index = dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1).indexOf(classAttribute);;
         if (result.equals(classAttribute)) {
           // Prediksi benar
           nTrue++;
+          (confusionMatrix[index][index])++;
+        } else {
+          result = knn.doBottomTopAlgorithm(i, i, i+foldNum[foldOrder]-1);
+          if (result.equals(classAttribute)) {
+            // Prediksi benar
+            nTrue++;
+            (confusionMatrix[index][index])++;
+          } else {
+            result = knn.doTopAlgorithm(i, i, i+foldNum[foldOrder]-1);
+            if (result.equals(classAttribute)) {
+              // Prediksi benar
+              nTrue++;
+              (confusionMatrix[index][index])++;
+            } else {
+              result = knn.doBottomAlgorithm(i, i, i+foldNum[foldOrder]-1);
+              if (result.equals(classAttribute)) {
+                // Prediksi benar
+                nTrue++;
+                (confusionMatrix[index][index])++;
+              } else {
+                int index2;
+                index2 = dataCollection.getAttributeType().get(dataCollection.getTotalAttribute()-1).indexOf(result);
+                (confusionMatrix[index][index2])++;
+              }
+            }
+          }
         }
         i++;
       }

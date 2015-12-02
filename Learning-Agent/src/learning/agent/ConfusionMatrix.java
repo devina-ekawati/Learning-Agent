@@ -27,6 +27,7 @@ public class ConfusionMatrix {
     public ConfusionMatrix(List<String> classes) {
         this.classes = classes;
         size = classes.size();
+        matrix = new int [size][size];
     }
     
     public int[][] getMatrix() {
