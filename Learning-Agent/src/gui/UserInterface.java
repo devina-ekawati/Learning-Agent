@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import javax.swing.*;
 import java.util.*;
 import java.util.logging.*;
@@ -62,6 +63,11 @@ public class UserInterface {
         frame.setVisible(true);
     }
 
+    private void setLabelLayout(JLabel label) {
+      label.setForeground(Color.white);
+      label.setFont(new Font("Roboto", Font.PLAIN, 15));
+    }
+    
     public void start() throws IOException {
         mainMenu.setLayout(new BorderLayout());
         // Menambah background
@@ -419,28 +425,7 @@ public class UserInterface {
         TransparentJPanel container2 = new TransparentJPanel();
         container2.setLayout(new GridBagLayout());
         
-        // Tombol back
-        JButton back = new JButton("Back");
-        c.gridx = 0;
-        c.gridy = 4;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(0,0,0,0);
-        c.anchor = GridBagConstraints.LAST_LINE_START;
-        container2.add(back);
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
-                if (source instanceof Component) {
-                    implementation();
-                    frame.setContentPane(mainMenu);
-                    frame.invalidate();
-                    frame.validate();
-                }
-            }
-        });
+        
 
         // Label untuk logo
         BufferedImage logoImage = null;
@@ -459,12 +444,12 @@ public class UserInterface {
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container2.add(logoLabel, c);
         // Textbox untuk file
-        JTextField file = new JTextField(30);
+        JTextField file = new JTextField(50);
         c.gridx = 1;
         c.gridy = 0;
         c.weightx = 1;
         c.weighty = 1;
-        c.gridwidth = 2;
+        c.gridwidth = 3;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         //c.insets = new Insets(0,0,0,0);
         container2.add(file, c);
@@ -482,7 +467,7 @@ public class UserInterface {
                 }
             }
         });
-        c.gridx = 3;
+        c.gridx = 4;
         c.gridy = 0;
         c.weightx = 1;
         c.weighty = 1;
@@ -490,6 +475,7 @@ public class UserInterface {
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container2.add(browse, c);
         JLabel algorithmLabel = new JLabel("Algorithm");
+        setLabelLayout(algorithmLabel);
         c.gridx = 0;
         c.gridy = 1;
         c.weightx = 1;
@@ -511,7 +497,8 @@ public class UserInterface {
         c.insets = new Insets(0,0,0,0);
         container2.add(algorithm, c);
         
-        JLabel kLabel = new JLabel("K");
+        JLabel kLabel = new JLabel("Number of K");
+        setLabelLayout(kLabel);
         JTextField k = new JTextField(2);
         c.gridx = 0;
         c.gridy = 2;
@@ -543,6 +530,7 @@ public class UserInterface {
         });
         
         JLabel testLabel = new JLabel("Test option");
+        setLabelLayout(testLabel);
         c.gridx = 2;
         c.gridy = 1;
         c.weightx = 1;
@@ -559,11 +547,20 @@ public class UserInterface {
         c.gridy = 1;
         c.weightx = 1;
         c.weighty = 1;
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
         container2.add(method, c);
         
+        JButton classify = new JButton("classify");
+        c.gridx = 4;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0,0,0,0);
+        container2.add(classify, c);
         
         c.gridx = 0;
         c.gridy = 0;
@@ -573,6 +570,28 @@ public class UserInterface {
         c.insets = new Insets(0,0,0,0);
         c.fill = GridBagConstraints.BOTH;
         container1.add(container2, c);
+        // Tombol back
+        JButton back = new JButton("Back");
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.insets = new Insets(0,0,70,0);
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        container1.add(back, c);
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source instanceof Component) {
+                    implementation();
+                    frame.setContentPane(mainMenu);
+                    frame.invalidate();
+                    frame.validate();
+                }
+            }
+        });
         if (_algorithm.compareTo("Naive Bayes") == 0) {
           // Membuat tabbedpane untuk menampilkan hasil
           JTabbedPane tabbedPane = new JTabbedPane();
@@ -600,28 +619,58 @@ public class UserInterface {
           scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-          tabbedPane.add(scrollPane, "Model");
-
-          JPanel panel2 = new JPanel();
+          tabbedPane.add(scrollPane, "Model");        
+          
+          ArrayList<BigDecimal> accuracy = accuracy = agent.getAccuracyFullTraining();
           ConfusionMatrix matrix = agent.getFullTrainingConfusionMatrix();
+          if(_testOptions.compareTo("Full Training") == 0) {
+            accuracy = agent.getAccuracyFullTraining();
+            matrix = agent.getFullTrainingConfusionMatrix();
+          } else if(_testOptions.compareTo("10 Folds") == 0) {
+            accuracy = agent.getAccuracyTenFold();
+            matrix = agent.getTenFoldConfusionMatrix();
+          }
+          agent.getAccuracyFullTraining();
+          
+          
+          JPanel panel2 = new JPanel();
+          
           ConfusionMatrixPanel panel = new ConfusionMatrixPanel(matrix);
           panel.initComponent();
+          panel2.setLayout(null);
           panel2.add(panel);
-          tabbedPane.add(panel2, "Confusion Matrix");
-          tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
+          panel.setBounds(new Rectangle(new Point(30,70), panel.getPreferredSize()));
+          JLabel label1 = new JLabel("Confusion Matrix");
+          panel2.add(label1);
+          label1.setBounds(new Rectangle(new Point(30,50), label1.getPreferredSize()));
+          JLabel accuracyLabel = new JLabel("Evaluation of training set");
+          panel2.add(accuracyLabel);
+          accuracyLabel.setBounds(new Rectangle(new Point(400,50), accuracyLabel.getPreferredSize()));        
+          agent.getAccuracyFullTraining();
+          
+          MathContext mc = new MathContext(4);
+          
+          JLabel label2 = new JLabel("Correctly classified class    : " + accuracy.get(0).multiply(new BigDecimal(100), mc) + "%");
+          panel2.add(label2);
+          label2.setBounds(400, 70, 200, 10);
+          JLabel label3 = new JLabel("Incorrectly classified class : " + accuracy.get(1).multiply(new BigDecimal(100), mc) + "%");
+          panel2.add(label3);
+          label3.setBounds(400, 90, 200, 10);
+          
+          tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
           c.gridx = 0;
           c.gridy = 1;
           c.weightx = 1;
           c.weighty = 1;
-          c.ipady = 250;
-          c.insets = new Insets(0,0,50,0);
+          c.ipady = 220;
           c.anchor = GridBagConstraints.LINE_START;
           c.fill = GridBagConstraints.HORIZONTAL;
           container1.add(tabbedPane, c);
-          
+          tabbedPane.add(panel2, "Confusion Matrix");
         } else if (_algorithm.compareTo("K-NN") == 0) {
           
         }
+        
         bgPane.add(container1);
         implementationUIResult.add(bgPane);
         frame.add(implementationUIResult);
