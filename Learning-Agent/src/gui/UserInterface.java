@@ -360,7 +360,7 @@ public class UserInterface {
                                 if (String.valueOf(algorithm.getSelectedItem()).compareTo("K-NN") == 0) {
                                   if (k.getText().length() > 0) {
                                     setup.dispose();
-                                    showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()));
+                                    showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()), Integer.parseInt(k.getText()), String.valueOf(method.getSelectedItem()));
                                     frame.setContentPane(implementationUIResult);
                                     frame.invalidate();
                                     frame.validate();
@@ -369,7 +369,7 @@ public class UserInterface {
                                   }
                                 } else {
                                   setup.dispose();
-                                  showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()),0);
+                                  showImplementationResult(file.getText(), String.valueOf(algorithm.getSelectedItem()),0,String.valueOf(method.getSelectedItem()));
                                   frame.setContentPane(implementationUIResult);
                                   frame.invalidate();
                                   frame.validate();
@@ -399,7 +399,7 @@ public class UserInterface {
         frame.add(implementationUI);
     }
 
-    public void showImplementationResult(String _path, String _algorithm, int _k) {
+    public void showImplementationResult(String _path, String _algorithm, int _k, String _testOptions) {
         implementationUIResult.setLayout(new BorderLayout());
         // Menambah background
         BackgroundPane bgPane;
