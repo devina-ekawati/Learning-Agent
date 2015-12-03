@@ -529,7 +529,7 @@ public class UserInterface {
         BackgroundPane bgPane;
         bgPane = new BackgroundPane();
         try {
-            BufferedImage bg = ImageIO.read(new File("assets/bg.jpg"));
+            BufferedImage bg = ImageIO.read(new File("assets/header-bg.jpg"));
             bgPane.setBackgroundImage(bg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -564,10 +564,8 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 0;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 3;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        //c.insets = new Insets(0,0,0,0);
         container2.add(file, c);
         // Button browse
         JButton browse = new JButton("Browse");
@@ -587,7 +585,6 @@ public class UserInterface {
         c.gridx = 4;
         c.gridy = 0;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container2.add(browse, c);
@@ -596,7 +593,6 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 1;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -608,7 +604,6 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 1;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -620,7 +615,6 @@ public class UserInterface {
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -628,7 +622,6 @@ public class UserInterface {
         c.gridx = 1;
         c.gridy = 2;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -651,7 +644,6 @@ public class UserInterface {
         c.gridx = 2;
         c.gridy = 1;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -663,7 +655,6 @@ public class UserInterface {
         c.gridx = 3;
         c.gridy = 1;
         c.weightx = 1;
-        //c.weighty = 1;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
@@ -673,8 +664,6 @@ public class UserInterface {
         c.gridx = 4;
         c.gridy = 1;
         c.weightx = 1;
-        //c.weighty = 1;
-        //c.gridwidth = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
         container2.add(classify, c);
@@ -699,8 +688,6 @@ public class UserInterface {
         
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 1;
-        //c.weighty = 1;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0,0,0,0);
         c.fill = GridBagConstraints.BOTH;
@@ -708,10 +695,8 @@ public class UserInterface {
         // Tombol back
         JButton back = new JButton("Back");
         c.gridx = 0;
-        c.gridy = 2;
-        c.weightx = 1;
-        //c.weighty = 1;
-        c.insets = new Insets(0,0,70,0);
+        c.gridy = 1;
+        c.weightx = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         container1.add(back, c);
@@ -889,7 +874,7 @@ public class UserInterface {
         BackgroundPane bgPane;
         bgPane = new BackgroundPane();
         try {
-            BufferedImage bg = ImageIO.read(new File("assets/bg.jpg"));
+            BufferedImage bg = ImageIO.read(new File("assets/header-bg.jpg"));
             bgPane.setBackgroundImage(bg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -1088,6 +1073,34 @@ public class UserInterface {
             frame.validate();
             
            }
+        });
+        
+        // Tombol back
+        TransparentJPanel backPanel = new TransparentJPanel();
+        JButton back = new JButton("Back");
+        back.setForeground(Color.white);
+        back.setPreferredSize(new Dimension(50, 30));
+        back.setFocusPainted(false);
+        back.setContentAreaFilled(false);
+        back.setOpaque(false);
+        back.setBorder(BorderFactory.createLineBorder(Color.white));
+        backPanel.add(back);
+        container1.add(backPanel);
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source instanceof Component) {
+                  try {
+                    start();
+                  } catch (IOException ex) {
+                    Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+                    frame.setContentPane(mainMenu);
+                    frame.invalidate();
+                    frame.validate();
+                }
+            }
         });
     }
     
